@@ -2,3 +2,65 @@
 Given a string, determine if it is a palindrome, considering only alphanumeric characters.
 Palindrome
 A palindrome is a word, number, phrase, or other sequences of characters which read the same backwards and forwards.
+
+## Trim Spaces
+Given an input string S that contains multiple words, you need to remove all the spaces present in the input string.
+There can be multiple spaces present after any word.
+
+## Reverse Word Wise
+Reverse the given string word wise. That is, the last word in given string should come at 1st place, last second word at 2nd place and so on. Individual words should remain as it is.
+
+## Print All Substrings
+For a given input string(str), write a function to print all the possible substrings.
+Substring
+A substring is a contiguous sequence of characters within a string. 
+Example: "cod" is a substring of "coding". Whereas, "cdng" is not as the characters taken are not contiguous
+
+## Column Wise Sum
+Given a 2D integer array of size M*N, find and print the sum of ith column elements separated by space.
+Input Format :
+First and only line of input contains M and N, followed by M * N space separated integers representing the elements in the 2D array.
+Output Format :
+Sum of every ith column elements (separated by space)
+
+## Largest Row or Column
+For a given two-dimensional integer array/list of size (N x M), you need to find out which row or column has the largest sum(sum of all the elements in a row/column) amongst all the rows and columns.
+Note :
+If there are more than one rows/columns with maximum sum, consider the row/column that comes first. And if ith row and jth column has the same largest sum, consider the ith row as answer.
+
+## Wave Print
+For a given two-dimensional integer array/list of size (N x M), print the array/list in a sine wave order, i.e, print the first column top to bottom, next column bottom to top and so on.
+Sample Input 1:
+```
+1
+3 4 
+1  2  3  4 
+5  6  7  8 
+9 10 11 12
+```
+Sample Output 1:
+```
+1 5 9 10 6 2 3 7 11 12 8 4
+```
+
+## Spiral Print
+For a given two-dimensional integer array/list of size (N x M), print it in a spiral form. That is, you need to print in the order followed for every iteration:
+a. First row(left to right)
+b. Last column(top to bottom)
+c. Last row(right to left)
+d. First column(bottom to top)
+ Mind that every element will be printed only once.
+Sample Input 1:
+```
+1
+4 4 
+1 2 3 4 
+5 6 7 8 
+9 10 11 12 
+13 14 15 16
+```
+Sample Output 1:
+```
+1 2 3 4 8 12 16 15 14 13 9 5 6 7 11 10 
+```
+ 
