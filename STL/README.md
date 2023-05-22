@@ -35,7 +35,7 @@ Sample Output 1:
 ```
 12 16 20 25
 ```
-## Valid pairs
+## Valid pairs $
 Given an array of integers and numbers k and m, write a function that returns true if given array can be divided into pairs such that the sum of every pair gives remainder m when divided by k.
 Input format :
 Line 1 : Integer N 
