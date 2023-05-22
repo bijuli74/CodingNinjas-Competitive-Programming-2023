@@ -114,8 +114,10 @@ The string is compressed only when the repeated character count is more than 1.
 Sample Input 2:
 ```
 aaabbcddeeeee
+aaabbccdsa
 ```
 Sample Output 2:
 ```
 a3b2cd2e5
+a3b2c2dsa
 ```
