@@ -58,7 +58,7 @@ For each test case, print its equivalent Fibonacci number.
 Given an integer N, print all the prime numbers that lie in the range 2 to N (both inclusive).
 Print the prime numbers in different lines.
 
-### Count Characters
+## Count Characters
 Write a program to count and print the total number of characters (lowercase english alphabets only), digits (0 to 9) and white spaces (single space, tab i.e. '\t' and newline i.e. '\n') entered till '$'.
 That is, input will be a stream of characters and you need to consider all the characters which are entered till '$'.
 Print count of characters, count of digits and count of white spaces respectively (separated by space).
@@ -70,3 +70,36 @@ Sample Input :
 abc def4 5$
 Sample Output :
 6 2 2
+
+## Terms of AP
+Write a program to print first x terms of the series 3N + 2 which are not multiples of 4.
+
+## Reverse of a number
+Write a program to generate the reverse of a given number N. Print the corresponding reverse number.
+Note : If a number has trailing zeros, then its reverse will not include them. For e.g., reverse of 10400 will be 401 instead of 00401
+
+## Binary to decimal
+Given a binary number as an integer N, convert it into decimal and print.
+
+## Decimal to Binary
+Given a decimal number (integer N), convert it into binary and print.
+Note: The given input number could be large, so the corresponding binary number can exceed the integer range. So you may want to take the answer as long for CPP and Java.
+Note for C++ coders: Do not use the inbuilt implementation of "pow" function. The implementation of that function is done for 'double's and it may fail when used for 'int's, 'long's, or 'long long's. Implement your own "pow" function to work for non-float data types.
+
+## Square Root (Integral)
+Given a number N, find its square root. You need to find and print only the integral part of square root of N.
+For eg. if number given is 18, answer is 4.
+
+
+## Check Number sequence
+
+You are given S, a sequence of n integers i.e. S = s1, s2, ..., sn. Compute if it is possible to split S into two parts : s1, s2, ..., si and si+1, si+2, ….., sn (0 <= i <= n) in such a way that the first part is strictly decreasing while the second is strictly increasing one.
+Note : We say that x is strictly larger than y when x > y.
+So, a strictly increasing sequence can be 1 4 8. However, 1 4 4 is NOT a strictly increasing sequence.
+
+
+That is, in the sequence if numbers are decreasing, they can start increasing at one point. Thereafter, they cannot decrease at any point further.
+Sequence made up of only increasing numbers or only decreasing numbers is a valid sequence. So, in both the cases, print true.
+
+
+You just need to print true/false. No need to split the sequence.
