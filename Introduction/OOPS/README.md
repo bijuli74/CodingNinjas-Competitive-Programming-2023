@@ -88,7 +88,9 @@ Sample Input 1 :
 1
 ```
 Sample Output 1 :
+ ```
 4x0 3x1 -3x2 3x3 -4x5
+ ```
 Sample Input 2 :
 ```
 3
