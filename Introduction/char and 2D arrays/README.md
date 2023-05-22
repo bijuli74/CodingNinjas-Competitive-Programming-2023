@@ -64,3 +64,43 @@ Sample Output 1:
 1 2 3 4 8 12 16 15 14 13 9 5 6 7 11 10 
 ```
  
+## Check Permutation
+For a given two strings, 'str1' and 'str2', check whether they are a permutation of each other or not.
+Permutations of each other
+Two strings are said to be a permutation of each other when either of the string's characters can be rearranged so that it becomes identical to the other one.
+
+Example: 
+str1= "sinrtg" 
+str2 = "string"
+
+The character of the first string(str1) can be rearranged to form str2 and hence we can say that the given strings are a permutation of each other.
+
+## Remove Consecutive Duplicates
+For a given string(str), remove all the consecutive duplicate characters.
+Example:
+Input String: "aaaa"
+Expected Output: "a"
+
+Input String: "aabbbcc"
+Expected Output: "abc"
+ Input Format:
+The first and only line of input contains a string without any leading and trailing spaces. All the characters in the string would be in lower case.
+Output Format:
+The only line of output prints the updated string.
+
+## Reverse Each Word
+Aadil has been provided with a sentence in the form of a string as a function parameter. The task is to implement a function so as to print the sentence such that each word in the sentence is reversed.
+Example:
+Input Sentence: "Hello, I am Aadil!"
+The expected output will print, ",olleH I ma !lidaA".
+
+## Remove character
+For a given a string(str) and a character X, write a function to remove all the occurrences of X from the given string.
+The input string will remain unchanged if the given character(X) doesn't exist in the input string.
+
+## Highest Occuring Character
+For a given a string(str), find and return the highest occurring character.
+Example:
+Input String: "abcdeapapqarr"
+Expected Output: 'a'
+Since 'a' has appeared four times in the string which happens to be the highest frequency character, the answer would be 'a'.
