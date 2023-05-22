@@ -104,3 +104,18 @@ Example:
 Input String: "abcdeapapqarr"
 Expected Output: 'a'
 Since 'a' has appeared four times in the string which happens to be the highest frequency character, the answer would be 'a'.
+
+## Compress the String
+Write a program to do basic string compression. For a character which is consecutively repeated more than once, replace consecutive duplicate occurrences with the count of repetitions.
+Example:
+If a string has 'x' repeated 5 times, replace this "xxxxx" with "x5".
+
+The string is compressed only when the repeated character count is more than 1.
+Sample Input 2:
+```
+aaabbcddeeeee
+```
+Sample Output 2:
+```
+a3b2cd2e5
+```
