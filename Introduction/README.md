@@ -118,3 +118,31 @@ Output Format :
 true or false
 Constraints :
 0 <= n <= 10^4
+
+## Array Sum
+Given an array of length N, you need to find and print the sum of all elements of the array.
+Input Format :
+Line 1 : An Integer N i.e. size of array
+Line 2 : N integers which are elements of the array, separated by spaces
+
+## Linear Search
+You have been given a random integer array/list(ARR) of size N, and an integer X. You need to search for the integer X in the given array/list using 'Linear Search'.
+ You have been required to return the index at which X is present in the array/list. If X has multiple occurrences in the array/list, then you need to return the index at which the first occurrence of X would be encountered. In case X is not present in the array/list, then return -1.
+'Linear search' is a method for finding an element within an array/list. It sequentially checks each element of the array/list until a match is found or the whole array/list has been searched.
+
+## Arrange Numbers in Array
+You have been given an empty array(ARR) and its size N. The only input taken from the user will be N and you need not worry about the array.
+Your task is to populate the array using the integer values in the range 1 to N(both inclusive) in the order - 1,3,5,.......,6,4,2.
+
+## Swap Alternate
+You have been given an array/list(ARR) of size N. You need to swap every pair of alternate elements in the array/list.
+You don't need to print or return anything, just change in the input array itself.
+Sample Input 2:
+2
+9
+9 3 6 12 4 32 5 11 19
+4
+1 2 3 4
+Sample Output 2 :
+3 9 12 6 32 4 11 5 19 
+2 1 4 3 
