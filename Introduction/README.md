@@ -151,3 +151,82 @@ Sample Output 2 :
 3 9 12 6 32 4 11 5 19 
 2 1 4 3 
 ```
+## Find Unique
+You have been given an integer array/list(ARR) of size N. Where N is equal to [2M + 1].
+Now, in the given array/list, 'M' numbers are present twice and one number is present only once.
+You need to find and return that number which is unique in the array/list.
+ Note:
+Unique element is always present in the array/list according to the given condition.
+
+## Find Duplicate
+You have been given an integer array/list(ARR) of size N which contains numbers from 0 to (N - 2). Each number is present at least once. That is, if N = 5, the array/list constitutes values ranging from 0 to 3 and among these, there is a single integer value that is present twice. You need to find and return that duplicate number present in the array.
+Note :
+Duplicate number is always present in the given array/list.
+
+## Intersection of Two Arrays II
+You have been given two integer arrays/list(ARR1 and ARR2) of size N and M, respectively. You need to print their intersection; An intersection for this problem can be defined when both the arrays/lists contain a particular value or to put it in other words, when there is a common value that exists in both the arrays/lists.
+Note :
+Input arrays/lists can contain duplicate elements.
+
+The intersection elements printed would be in the order they appear in the first array/list(ARR1)
+Sample Input 1 :
+```
+2
+6
+2 6 8 5 4 3
+4
+2 3 4 7 
+2
+10 10
+1
+10
+```
+Sample Output 1 :
+```
+2 4 3
+10
+```
+## Pair Sum
+You have been given an integer array/list(ARR) and a number X. Find and return the total number of pairs in the array/list which sum to X.
+Note:
+Given array/list can contain duplicate elements. 
+Constraints :
+1 <= t <= 10^2
+0 <= N <= 10^3
+0 <= X <= 10^9
+Time Limit: 1 sec
+Sample Input 1:
+```
+1
+9
+1 3 6 2 5 4 3 2 4
+7
+```
+Sample Output 1:
+```
+7
+```
+## Triplet Sum
+You have been given a random integer array/list(ARR) and a number X. Find and return the number of triplets in the array/list which sum to X.
+Note :
+Given array/list can contain duplicate elements.
+Constraints :
+1 <= t <= 50
+0 <= N <= 10^2
+0 <= X <= 10^9
+Time Limit: 1 sec
+Sample Input 1:
+```
+1
+7
+1 2 3 4 5 6 7 
+12
+```
+Sample Output 1:
+```
+5
+```
+
+## Sort 0 1
+You have been given an integer array/list(ARR) of size N that contains only integers, 0 and 1. Write a function to sort this array/list. Think of a solution which scans the array/list only once and don't require use of an extra array/list.
+Note: You need to change in the given array/list itself. 
