@@ -60,7 +60,7 @@ Explanation :
 Pairs will be (2,1) and (5,7)
 ```
 ## Two sum $
-Send Feedback
+
 You are given an array of integers 'ARR' of length 'N' and an integer Target. Your task is to return all pairs of elements such that they add up to Target.
 Note:
 We cannot use the element at a given index twice.
