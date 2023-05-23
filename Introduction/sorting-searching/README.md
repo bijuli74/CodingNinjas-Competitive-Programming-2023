@@ -105,7 +105,7 @@ Sample Output 2:
 0 8 6 5
 1 0 2 2 0 
 ```
-## Find pair sum in rotated sorted array
+## Find pair sum in rotated sorted array $
 Alice and Bob always loved to play with arrays. Alice took a sorted array and rotated it clockwise for a
 certain number of times.
 For Example:
