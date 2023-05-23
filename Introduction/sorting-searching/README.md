@@ -105,3 +105,16 @@ Sample Output 2:
 0 8 6 5
 1 0 2 2 0 
 ```
+## Find pair sum in rotated sorted array
+Alice and Bob always loved to play with arrays. Alice took a sorted array and rotated it clockwise for a
+certain number of times.
+For Example:
+Alice took a sorted array =
+and if she rotates it by 3,
+becomes: [8, 18, 11, 4, 6].
+then the array
+After rotating a sorted array, Alice gave a number 'K' to Bob and asked him to search for a pair in an
+array whose sum is equal to K. Since Bob was busy preparing for his semester exams, he asked you to
+help him.
+You are given an array of integers ARR and a number K. Your task is to find out whether there exists a
+pair in the array ARR with sum K or not. If there exists a pair then you can return TRUE else retum FALSE;
