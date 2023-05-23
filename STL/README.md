@@ -218,3 +218,26 @@ Sample Output 1:
 Explanation of Sample Output 1:
 We have 2 pairs which are probable answers (1, 2) with (2, 3) and (2, 3) with (3, 4). The distance between both of them is equal to 2.
 ```
+## No of distinct pairs in array whose difference is K $
+Problem Statement
+Suggest Edit
+Ninja has been asked to organize a dance competition. Ninja decided that he will take individual entries
+and then will divide them into pairs. As part of the entry, he asked the participants to choose any number.
+Ninja then thought of a creative method to divide them into pairs. He decided that he would select a
+number 'K', and then select numbers from the list that have a difference equal to 4K'.
+You need to help Ninja in finding the number of distinct pairs from the numbers with differences equal to
+Example:
+Let us suppose the numbers are chosen by participants: [2, 6, 5, 2, 3] and K =
+3, then
+the distinct pairs having differences equal to K are: [2, 5] and [3, 6] so print 2.
+Note:
+The list of
+pairs.
+For example
+are: (2, 3)
+numbers can contain duplicate numbers, you need to print only the distinct
+[2,
+and
+2,
+3, 4] and K =
+1, so you need to print 2 as the two distinct pairs
