@@ -32,5 +32,14 @@ You are given two arrays, ‘arr1’ of size 'N' and ‘arr2’ of size 'M'. You
 Note:
 The XOR sum of [A, B, C] is equal to A XOR B XOR C.
 
+## Ninja and the task
+Given an integer 'X' your task is to count the number of integer values 'Y' such that ('X' ^ 'Y') > 'X' and 0 < 'Y' < 'X'.
+Where ( ^ ) is the bitwise xor operator.
+EXAMPLE:
+Input: 'X' = 2
+Output: 1
+
+There is only one value of 'Y' = 1 satisfies the condition ('X' ^ 'Y') > 'X' and 0 < 'Y' < 'X'
+
 ## Find First Set Bit
 You are given an integer N. You need to return an integer M, in which only one bit is set which at the position of a lowest set bit of N (from right to left).
