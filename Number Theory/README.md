@@ -141,3 +141,38 @@ You are now given two integers ‘X’ and ‘Y’ and ‘Q’ queries of the ty
 For example:
 If ‘X’=4 and ‘Y’=6, and the range is [1,7], then the answer will be 2, as both 6 and 7 satisfy the above condition. 
 
+## Boring Factorials
+Sameer and Arpit want to overcome their fear of Maths and so they have been recently practising Maths problems a lot. Aman, their friend has been helping them out. But as it goes, Sameer and Arpit have got bored with problems involving factorials. Reason being, the factorials are too easy to calculate in problems as they only require the residue modulo some prime and that is easy to calculate in linear time. So to make things interesting for them, Aman - The Mathemagician, gives them an interesting task. He gives them a prime number P and an integer N close to P, and asks them to find N! modulo P. He asks T such queries.
+
+## Numbers and Remainders
+Ninja is learning about the mathematical division and remainders. So in curiosity, he forms two lists of numbers ‘ARR’ and ‘REM’ both having ‘N’ numbers. Now Ninja is interested in finding the minimum positive number ‘X’ such that ‘X’ satisfies the following condition for all ‘N’ values:
+X % ‘ARR’[i] = ‘REM’[i] (Remainder of X / ARR[i] should be equal to  ‘REM’[i]).
+You are given two arrays ‘ARR’ and ‘REM’ both having ‘N’ values corresponding to the numbers and remainders. Your task is to find the smallest positive integer ‘X’ fulfilling the given conditions.
+
+## Income On Nth Day
+Daulat Ram is an affluent business man. After demonetization, IT raid was held at his accommodation in which all his money was seized. He is very eager to gain his money back, he started investing in certain ventures and earned out of them. On the first day, his income was Rs. X, followed by Rs. Y on the second day. Daulat Ram observed his growth as a function and wanted to calculate his income on the Nth day.
+The function he found out was FN = FN-1 + FN-2 + FN-1×FN-2
+Given his income on day 0 and day 1, calculate his income on the Nth day (yeah Its that simple).
+
+## Fermat Little Theorem
+You are given two integers 'n' and 'r' and a prime number 'p'. Your task is to find (nCr) % p where nCr can be calculated as n! / (r! * (n - r)!).
+Note :
+N!  =  1 * 2 * 3 *... N
+
+## Number Of Sequence
+A sequence is called nice by a coding ninja if the following conditions are met:
+0 <= ‘ARR’[k] <= k 
+‘ARR’[k] = ‘ARR’[m] mod k, for all pairs of k,m such that k divides m.
+You are given a sequence of integers ‘ARR’ where some numbers may be -1. Find and print the number of nice sequences you can create by changing each -1 to a non-negative integer. As this number can be quite large, your answer must be modulo it by 10 ^ 9 + 7.
+For example:
+Given ‘N’ = 3, 
+'A' = {0, -1, -1} 
+Then the answer is 6 because following sequences are possible:[0, 0, 0], [0, 1, 0], [0, 1, 1], [0, 1, 2], [0, 0, 1], [0, 0, 2].
+
+## Factorial Again
+Ninja Kate has finally calmed down and decides to forgive Little Ninja Deepu, but she will not forgive him just like that. Finally, she agrees to forgive him because he can solve a mathematical question for her.
+She gives Ninja Deepu a large number ‘N’ and a prime number ‘P’ and asks him to calculate ((3 * ‘N’ ) ! / ( 3! ^ ‘N’ ) )% ‘P.’
+Your task is to help Little Ninja Deepu get back together with Ninja Kate.
+For example:
+Given ‘N’ = 2, ‘P’ = 11. 
+Then the answer will be 9. Because (6!) / (6 ^ 2) = 20, and 20 remainder 11 is 9. Therefore the answer is 9.
