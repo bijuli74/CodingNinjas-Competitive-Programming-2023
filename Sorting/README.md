@@ -108,3 +108,28 @@ For the third number, the contribution to the sum is 1.
 For the fourth number, the contribution to the sum is 9 (1+5+3).
 For the fifth number, the contribution to the sum is 4 (1+3).
 Hence the sum is 15 (0+1+1+9+4).
+
+# Test
+
+## Party Over
+Ninja is coming after a long party to his home, but he faces a monster while returning. Monster puts up a condition to Ninja in order to free him. The monster gives him ‘n’ strings and asks him to sort them. However, he adds an extra condition to him.
+Since the monster knows that Ninja could do it easily, the monster wants him to sort them using the last letter of each string. If there are strings with the same last character, sort them based on their second last character and so on.
+
+## 3Sum $
+You are given an array/list ARR consisting of N integers. Your task is to find all the distinct triplets present in the array which adds up to a given number K.
+An array is said to have a triplet {ARR[i], ARR[j], ARR[k]} with sum = 'K' if there exists three indices i, j and k such that i!=j, j!=k and i!=j and ARR[i] + ARR[j] + ARR[k] = 'K'.
+Note:
+1. You can return the list of values in any order. For example, if a valid triplet is {1, 2, -3}, then {2, -3, 1}, {-3, 2, 1} etc is also valid triplet. Also, the ordering of different triplets can be random i.e if there are more than one valid triplets, you can return them in any order.
+2. The elements in the array need not be distinct.
+3. If no such triplet is present in the array, then return an empty list, and the output printed for such a test case will be "-1".
+
+## Maximum activities
+You are given N activities with their start time Start[] and finish time Finish[]. You need to tell the maximum number of activities a single person can perform.
+Note:
+A person can only work on a single activity at a time. The start time of one activity can coincide with the end time of another.
+
+## Two City Scheduling $
+Ninja is planning to organize an exhibition in which ‘2N’ peoples are coming. The hall’s capacity in which the exhibition is going to take place is only ‘N’. So, ninja thinks of organizing two exhibitions in 2 different cities, ‘CITY_A’ and ‘CITY_B’, each of capacity ‘N’. All ‘2N’ people will come to the exhibition but in the group of ‘N’ in two different cities. Ninja wants your help in organizing this event.
+You are given an array ‘COST’ where “COST[i] = [COST_TO_Ai, COST_TO_Bi]”, in which ‘COST_TO_Ai’ is the cost of the ith person to fly to the city A, and ‘COST_TO_Bi’ is the cost of the ith person to fly to the city B. Your task is to find the minimum cost of organizing the exhibition in which every person flies to a city such that exactly ‘N’ people arrive in each city.
+Note:
+The intersection of the set of the persons who go to ‘CITY_A’ to those going to ‘CITY_B’ is to be disjoint set, whereas the union must be the ‘2N’.
