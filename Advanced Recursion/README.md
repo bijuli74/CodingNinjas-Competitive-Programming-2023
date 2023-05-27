@@ -33,6 +33,23 @@ Series = [ 5, 3, 1, -1, 1, 3, 5]
 ## Family Structure
 Aakash is a member of Ninja club. He has a weird family structure. Every male member (M) gives birth to a male child first and then a female child, whereas every female (F) member gives birth to a female child first and then to a male child. Aakash analyses this pattern and wants to know what will be the Kth child in his Nth generation. Can you help him?
 
+## E. Creating Expression1
+Given two numbers N,Xand an array Aof Nnumbers. Determine if there is a way to put '+' or '-' signs between every two numbers in the array Ain order to make an expression that is equal to X
+
+Note: Solve this problem using recursion.
+
+Input
+First line contains two numbers N
+ and X
+ (1≤N≤20,−109≤X≤109)
+
+Second line contains N
+ distinct numbers A1,A2,....AN
+ (1≤Ai≤105)
+
+Output
+Print "YES" if you can put '+' or '-' signs between every two number to create an expression that is equal to X
+ otherwise, print "NO".
 ## Return Subsets Sum to K $
 Given an integer array 'ARR' of size 'N' and an integer 'K', return all the subsets of 'ARR' which sum to 'K'.
 Subset of an array 'ARR' is a tuple that can be obtained from 'ARR' by removing some (possibly all) elements of 'ARR'.
