@@ -68,3 +68,39 @@ In number theory, Euler's totient function counts the positive integers up to a 
 You are given array a consisting of n distinct integers. A set s of numbers is called good if you can rearrange the elements in such a way that each element divides the next element in the order, i.e. 'si' divides 'si + 1', such that i < |s|, where |s| denotes size of set |s|.
 Find out number of distinct good sets that you can create using the values of the array. You can use one value only once in a particular set; ie. a set cannot have duplicate values. Two sets are said to be different from each other if there exists an element in one set, which does not exist in the other.
 As the answer could be large, print your answer modulo 10^9 + 7.
+
+## Fibonacci Sum  $$
+The fibonacci sequence is defined by the following relation:
+ F(0) = 0
+ F(1) = 1
+ F(N) = F(N - 1) + F(N - 2), N >= 2
+Your task is very simple. Given two non-negative integers N and M (N <= M), you have to calculate and return the sum (F(N) + F(N + 1) + ... + F(M)) mod 1000000007.
+
+## Sehwag and ETF $$
+Sehwag has been solving a lot of mathematical problems recently. He was learning ETF (Euler Totient Function) and found the topic quite interesting. So, he tried solving a question on ETF. He will be given two numbers L and R. He has to find the probability that the ETF of a number in the range [L, R] is divisible by a number K.
+Input Format:
+The first line contains an integer T, representing the number of test cases.
+The next T lines will contain three integers L, R and K.
+
+## Sanchit And Nuclear Reactor
+Sanchit, an eccentric physicist, challenges his engineer friend Howard to solve a problem related to Sanchit's nuclear reactor. The reactor has a special condition where atoms reach a stable state when their number is a multiple of a prime number called the Cooper number. Howard needs to calculate the reactor's energy output after a given time T.
+Input Format
+The first line of input contains T(number of the test case), each test case follows as.
+contian two space-separated integers N and M where M is a prime number.
+Output Format
+You have to determine the energy output after time T. As the number can be quite large so output it modulo Cooper number m.
+Constraints:
+1 <= T <= 100
+1 <= N <= 10^18
+1 <= M <= 10^4
+Sample Input
+2
+1 5
+2 5
+Sample Output
+1
+2
+Explanation
+After 1 seconds, there is only 1 atom in the tank. Hence energy output is 1. After 2 seconds, there are 2 atoms which reacts to give energy output of 2.
+
+
