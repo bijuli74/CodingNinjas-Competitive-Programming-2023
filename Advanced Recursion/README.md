@@ -60,3 +60,10 @@ The order of elements in a particular subset should be in increasing order of th
 ## Count derangements
 A Derangement is a permutation of ‘N’ elements, such that no element appears in its original position. For example, an instance of derangement of {0, 1, 2, 3} is {2, 3, 1, 0}, because 2 present at index 0 is not at its initial position which is 2 and similarly for other elements of the sequence.
 Given a number ‘N’, find the total number of derangements possible of a set of 'N’ elements.
+
+## Verbal Arithmetic Puzzle $
+You are given an array of the strings “words” of size 'M' and another string “result”. You have to treat it as an equation in which the left side is represented by the array “words” and the right side is represented by the string "result". Your task is to determine whether the equation is solvable or not under the following conditions:
+1. Each character is decoded as a digit in the range [0, 9].
+2. Each character must have only one mapping, and every pair of characters must map to different digits.
+3. Each element of the array “words” and the string “result” are decoded as one number without the leading zeros.
+4. The sum of the numbers on the left-hand side (words) must equal the number on the right-hand side (result).
