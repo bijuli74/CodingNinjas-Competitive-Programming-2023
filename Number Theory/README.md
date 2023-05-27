@@ -117,3 +117,27 @@ There are only three phases in Swaps life: Sleep, Play and Study. Also, there ar
 The sleep and the play phase makes Swaps happy whereas the study phase makes him sad. Quite obvious, isn't it? But we know that life isn't that great, one cannot be happy all the time.
 Swaps, being a very sensitive guy, doesn't like to mix his emotions on a particular day. So each day, he is in exactly one of the three phases.
 Given N which denotes the number of days and K which denotes the exact number of days Swaps needs to be happy out of these N days, can you tell him in how many ways can he achieve this? Since the output value can be very large, take modulo with 1000000007(10^9+7)
+
+## Cubic Square
+Varun is learning method of successive squaring so that he can calculate a^b mod m quickly. To give himself practice he wrote many tuples of a, b and m and went to school thinking that he will do it after school.
+After school he found that tuples he wrote are modified by his little sister. His sister converted each b into base 3. Varun wrote everything in base 10.
+
+## Find the N-th term
+You want to get tutelage under the Ultimate Ninja Ankush, but for that you have to pass his test. His test is simple: he has given you a relation function, F(n) = 2*F(n-1) + 3*F(n-2),where F(0) = F(1) = 1 and wants you to find the ‘N’th term for the function.
+The 'N'th term can be very large, return it after modulus 10^9 + 7.
+For example:
+Given ‘N’ = 3,
+F(3) = 13,This is because F(0) = 1, F(1) = 1, Therefore F(2) = 2*F(1) + 3*F(1), therefore F(2) = 5, and F(3) = 2*F(2) + 3*F(1), therefore F(3) = 13.
+
+## Find The Prime
+Ninja is given a crucial task. He is given a positive integer ‘K’, and he has to tell the ‘Kth’ prime number.
+For example:
+The first prime number is ‘2’, and the second prime number is ‘3’.
+
+## Remainder Check $$
+You just learnt about the “mod” operation and you’re fascinated by it. ‘X’ mod ‘Y’ is defined as the remainder that ‘X’ leaves when divided by ‘Y’.
+You are now given two integers ‘X’ and ‘Y’ and ‘Q’ queries of the type ‘L’, ’R’ and you want to find the number of integers ‘T’ in the range (L , R) (both ‘L’ and ‘R’ included) such that
+( ( T mod X ) mod Y ) ≠ ( ( T mod Y ) mod X ) 
+For example:
+If ‘X’=4 and ‘Y’=6, and the range is [1,7], then the answer will be 2, as both 6 and 7 satisfy the above condition. 
+
