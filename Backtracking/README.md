@@ -60,3 +60,9 @@ You are given a positive integer N. Your task is to create the lexicographically
 1. 1 occurs in the sequence exactly once.
 2. Each integer between 2 to N(inclusive) occurs in the sequence exactly twice.
 3. For each integer i between 2 to N, the distance between the two occurrences of i should be exactly i.
+
+## 24 Game
+Ninja is feeling lonely, so he started playing online games. While searching for fun, he found an exciting game. In this game, Ninja has to choose four cards at random. On each card, there is a number between 1 to 9, both inclusive. For Ninja to win, he has to make the number 24 using the number on cards and the following operator *, /, +, -, (, ).
+Help Ninja to find whether he will win the game or not, on the basis of his selection. If Ninja can win the game, print true otherwise, print false.
+Example:-
+If the cards Ninja chooses are 4, 1, 8, 7. Then Ninja can make 24 by (8 - 4) * (7 - 1). Hence Ninja can win, so you have to return true.
