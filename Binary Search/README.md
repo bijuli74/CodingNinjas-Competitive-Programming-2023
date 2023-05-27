@@ -53,3 +53,18 @@ Given:- ‘X’ = 5 and ‘N’ = 2.
 The output will be 3 and 3.
 Initially, there are no lights, and we install a light at position three; therefore, there is a segment between the 3 and 6. 
 Then we install a light at position four; therefore, the largest gap becomes between 0 to 3.
+
+## Glowing Bulbs $
+Send Feedback
+There are an infinite number of electric bulbs. Each bulb is assigned a unique integer starting from 1. There are ‘N’ switches also and each switch is labeled by a unique prime number. If a switch labeled with prime integer ‘p’ is turned ON, then all the bulbs having a number that is multiple of ‘p’ will start glowing. For example, if we turn ON the switch labelled 2, then all the bulbs having numbers 2, 4, 6, 8, 10, ... i.e all bulbs with numbers as multiples of 2 will start glowing.
+You are given an array/list ‘LABELS’ consisting of ‘N’ unique prime integers representing the label of the switches and an integer ‘K’. Your task is to find the integer assigned to Kth glowing bulb from the start when all these ‘N’ switches are turned ON.
+Note :
+1. Some bulbs can glow by multiple switches and some are not glowed by any switch.
+2. If any of the switches that can glow a bulb is turned ‘ON’, then the corresponding bulb will glow.
+Example :
+Consider 3 switches with labels [3, 5,  7] and we need to find the 5th glowing bulb from the start after turning these 3 switches ON.
+We can see that bulbs numbered  3, 6, 9, 15, 18 …  will glow if the switch having label 3 is turned ON.
+The bulbs numbered 5, 10, 15, 20 … will glow if the switch having label 5 is turned ON.
+The bulbs numbered 7, 14, 21, 28 … will glow if the switch having label 7 is turned ON.
+It implies that bulbs numbered 3, 5, 6, 7, 9, 10, 14, 15, 18, 20, 21… will glow when these three switches are turned ON.
+The 5th glowing bulb from start is assigned integer 9. Thus, we should return 9.
