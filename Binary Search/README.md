@@ -43,3 +43,13 @@ Therefore, the final answer is [1, 2, -1].
 
 ## Shopping Options
 You are given the list of costs of pants in an array “pants”, shirts in an array “shirts”, shoes in an array “shoes”, and skirts in an array “skirts”. You are also given a budget amount ‘X’ to spend. You want to buy exactly 1 item from each list. Your task is to determine the total number of possible combinations that you can buy, given that the total amount of your purchase does not exceed your budget amount
+
+## Traffic Lights $
+There is a street of length ‘X’ with 'X' slots numbered from 0 to 'X' (0,1,…, ’X’). Initially, there are no traffic lights in these slots. Later ‘N’ sets of traffic lights are added to the street one after another. The ‘POS’ array tells the position of the ‘i’th light.
+Your task is to calculate the length of the longest passage without traffic lights after each addition.
+For example:
+Given:- ‘X’ = 5 and ‘N’ = 2.
+‘POS’[] = 3, 4
+The output will be 3 and 3.
+Initially, there are no lights, and we install a light at position three; therefore, there is a segment between the 3 and 6. 
+Then we install a light at position four; therefore, the largest gap becomes between 0 to 3.
