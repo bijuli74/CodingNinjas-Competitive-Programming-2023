@@ -1,5 +1,5 @@
 #include <bits/stdc++.h>
- 
+ // spoj 
 using namespace std;
 bool vis[10][10];
 vector<string>mine(10);
