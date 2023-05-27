@@ -89,6 +89,7 @@ The first line of input contains T(number of the test case), each test case foll
 contian two space-separated integers N and M where M is a prime number.
 Output Format
 You have to determine the energy output after time T. As the number can be quite large so output it modulo Cooper number m.
+```
 Constraints:
 1 <= T <= 100
 1 <= N <= 10^18
@@ -102,5 +103,17 @@ Sample Output
 2
 Explanation
 After 1 seconds, there is only 1 atom in the tank. Hence energy output is 1. After 2 seconds, there are 2 atoms which reacts to give energy output of 2.
+```
+## GCD Extreme
+Given the value of N, you will have to find the value of G. The meaning of G is given in the following code
+G=0;
+for(i = 1 ; i < N ; i++)
+   for(j = i+1 ; j <= N ; j++) 
+       G+=gcd(i,j);
+Here gcd() is a function that finds the greatest common divisor of the two input numbers.
 
-
+## Innocent Swaps and His Emotions $$
+There are only three phases in Swaps life: Sleep, Play and Study. Also, there are two types of emotions Swaps experiences: Happy and Sad. Each phase of his life brings either kind of emotions.
+The sleep and the play phase makes Swaps happy whereas the study phase makes him sad. Quite obvious, isn't it? But we know that life isn't that great, one cannot be happy all the time.
+Swaps, being a very sensitive guy, doesn't like to mix his emotions on a particular day. So each day, he is in exactly one of the three phases.
+Given N which denotes the number of days and K which denotes the exact number of days Swaps needs to be happy out of these N days, can you tell him in how many ways can he achieve this? Since the output value can be very large, take modulo with 1000000007(10^9+7)
