@@ -1097,3 +1097,1005 @@ int main(){
 	return 0;
 }
 ```
+## Unique Colors
+You are given a tree(rooted at 1) with ‘N’ vertex having ‘N’ - 1 edge. Each vertex has a color associated with it given in the array ‘COLOR’. Your task is to print the count of unique colors for each node in the subtree of that node.
+```cpp
+#include <bits/stdc++.h>
+using namespace std;
+
+#define ll long long
+#define ar array
+//Segment Tree Distinct Value Queries Qs
+const int mxN = 1e5;
+int n, d[mxN], anc[mxN][19], de[mxN], ds[mxN], x[mxN], dt;
+// ll ft[mxN+1];
+vector<int> adj[mxN];
+vector<ar<int, 2>> ta[mxN];
+// int ans[mxN];
+
+struct node{
+    ll mn, s, lz;
+} st[1<<19];
+ 
+void app(int i, ll x, int l2, int r2){
+     st[i].mn += x;
+    st[i].s += x*(r2-l2+1);
+    st[i].lz += x;
+}
+void psh(int i, int l2, int m2, int r2){
+    app(2*i, st[i].lz, l2, m2);
+    app(2*i+1, st[i].lz, m2+1, r2);
+    st[i].lz=0;
+}
+void upd(int l1, ll x, int i=1, int l2=0, int r2=n-1){
+    if(l2==r2){
+        st[i].mn=x;
+        st[i].s=x;
+        return;
+    }
+    int m2 = (l2+r2)/2;
+    psh(i, l2, m2, r2);
+    if(l1<=m2)
+        upd(l1, x, 2*i, l2, m2);
+    else
+        upd(l1, x, 2*i+1, m2+1, r2);
+     st[i].mn = min(st[2*i].mn, st[2*i+1].mn);
+    st[i].s = st[2*i].s + st[2*i+1].s;
+}
+ 
+void upd2(int l1, int r1, int x, int i=1, int l2=0, int r2=n-1){
+    if(l1<=l2 &&r2<=r1){
+        app(i, x, l2, r2);
+        return;
+    }
+    int m2 = (l2+r2)/2;
+    psh(i, l2, m2, r2);
+    if(l1<=m2)
+        upd2(l1, r1, x, 2*i, l2, m2);
+    if(m2<r1)
+        upd2(l1, r1, x, 2*i+1, m2+1, r2);
+     st[i].mn = min(st[2*i].mn, st[2*i+1].mn);
+    st[i].s = st[2*i].s + st[2*i+1].s;
+}
+ll qry(int l1, int r1, int i=1, int l2=0, int r2=n-1){
+    if(l1<=l2 && r2<=r1){
+        return st[i].s;
+    }
+    int m2 = (l2+r2)/2;
+    psh(i, l2, m2, r2);
+    return (l1<=m2? qry(l1, r1, 2*i, l2, m2):0) + (m2<r1? qry(l1, r1, 2*i+1, m2+1, r2):0);
+}
+// void upd(int i, int x){
+//     for(++i; i<=n; i+=i&-i)
+//         ft[i]+=x;
+// }
+
+// int qry(int i){
+//     int r=0;
+//     for(; i; i-=i&-i)
+//         r+=ft[i];
+//     return r;
+// }
+
+void dfs(int u=0, int p=-1){
+    anc[u][0]=p;
+    for(int i=1; i<19; ++i)
+        anc[u][i]=~anc[u][i-1] ? anc[anc[u][i-1]][i-1]:-1;
+    ds[u]=dt++;
+    for(int v: adj[u]){
+        if(v==p)
+            continue;
+        d[v]=d[u]+1;
+        dfs(v, u);
+    }
+    de[u]=dt;
+}
+
+int lca(int u, int v){
+    if(d[u]<d[v])
+        swap(u, v);
+    for(int i=18; ~i; --i)
+        if(d[u]-(1<<i) >= d[v])
+            u=anc[u][i];
+    
+    if(u==v)
+        return u;
+    for(int i=18; ~i; --i)
+        if(anc[u][i]^anc[v][i])
+            u=anc[u][i], v=anc[v][i];
+    
+    return anc[u][0];
+}
+
+void clear(){
+
+    for(int i=0; i<mxN; ++i){
+        adj[i].clear();
+        ta[i].clear();
+        // anc[i].clear();
+        d[i]=de[i]=ds[i]=x[i]=0;
+    }
+    dt=0;
+}
+vector<int> uniqueClr(int N, vector<vector<int>> &edges, vector<int> &color) {
+    n = N;
+    vector<int> ans(n, 0);
+
+    clear();
+
+    for(int i=0; i<edges.size(); ++i){
+        int a=edges[i][0], b=edges[i][1];
+        --a, --b;
+        adj[a].push_back(b);
+        adj[b].push_back(a);
+    }
+    dfs();
+    for(int i=0; i<n; ++i)
+      ta[de[i] - 1].push_back({ds[i], i}), x[ds[i]]=color[i];
+    
+    map<int, int> mp;
+    for(int i=0; i<n; ++i){
+        upd(i, 1);
+        if(mp.find(x[i]) != mp.end())
+            upd(mp[x[i]], 0);
+        mp[x[i]]=i;
+        for(ar<int, 2> a: ta[i])
+            ans[a[1]]=qry(a[0], i);
+    }
+
+    return ans;
+}
+```
+
+## Path Queries
+You are given a tree containing ‘N’ nodes. The nodes are numbered from 0, 1, 2 … N - 1 and node 0 is the root of the tree. You are also given an array ‘ARR’ denoting the value associated with each node of this tree.
+You have to process ‘Q’ queries, there are two types of queries:
+1) For each query of type-1, you are given an index ‘IDX’ and a value ‘VAL’. The value associated with node 'IDX' must be replaced with the value 'VAL'.
+
+2) For each query of type-2, you are given an index ‘IDX’. You need to calculate the sum of all the node values that lie on the path from the root node to the node ‘IDX’.
+
+```cpp
+#define ll long long
+//solving using BIT/Fenwick Tree
+const int mxN = 1e5;
+int n, d[mxN], anc[mxN][19], c[mxN], de[mxN], ds[mxN], dt;
+int ft[mxN+1];
+vector<int> adj[mxN];
+
+void upd(int i, int x){
+    for(++i; i<=n; i+=i&-i)
+        ft[i]+=x;
+}
+
+int qry(int i){
+    int r=0;
+    for(; i; i-=i&-i)
+        r+=ft[i];
+    return r;
+}
+
+void dfs(int u=0, int p=-1){
+    anc[u][0]=p;
+    for(int i=1; i<19; ++i)
+        anc[u][i]=~anc[u][i-1] ? anc[anc[u][i-1]][i-1]:-1;
+    ds[u]=dt++;
+    for(int v: adj[u]){
+        if(v==p)
+            continue;
+        d[v]=d[u]+1;
+        dfs(v, u);
+    }
+    de[u]=dt;
+}
+
+int lca(int u, int v){
+    if(d[u]<d[v])
+        swap(u, v);
+    for(int i=18; ~i; --i)
+        if(d[u]-(1<<i) >= d[v])
+            u=anc[u][i];
+    
+    if(u==v)
+        return u;
+    for(int i=18; ~i; --i)
+        if(anc[u][i]^anc[v][i])
+            u=anc[u][i], v=anc[v][i];
+    
+    return anc[u][0];
+}
+
+void clear(){
+    for(int i=0; i<mxN; ++i){
+        adj[i].clear();
+        d[i]=ds[i]=de[i]=ft[i]=0;
+    }
+    dt=0;
+}
+vector<int> pathQueries(int N, vector<int> V, vector<vector<int>> edges,
+                                  int Q, vector<vector<int>> queries) {
+    
+    clear();
+    n = N;
+    vector<int> ans;
+    for(int i=0; i<edges.size(); ++i){
+        int a=edges[i][0], b=edges[i][1];
+        adj[a].push_back(b);
+        adj[b].push_back(a);
+    }
+
+    dfs();
+    for(int i=0; i<n; ++i)
+        upd(ds[i], V[i]), upd(de[i], -V[i]);
+    
+    for(int i=0; i<Q; ++i){
+        int qt=queries[i][0];
+        if(qt==1){
+            int s, x;
+            s=queries[i][1], x=queries[i][2];
+            upd(ds[s], x-V[s]);
+            upd(de[s], V[s]-x);
+            V[s]=x;
+        }else{
+            int s=queries[i][1]; 
+            int res = qry(ds[s]+1);
+            ans.push_back(res);
+        }
+    }
+    return ans;
+}
+```
+## Tree Queries $
+You are given a tree with ‘N’ nodes numbered 0 to ‘N’ - 1 rooted at node 0. Each node contains 0 coins initially. You are also given ‘M’ queries. The queries are of the following two types
+1 L Y: Increase the coins of all nodes at ‘L’ distance from root by 'Y'
+2 X: Get the sum of all coins of the subtree rooted at node ‘X’
+```cpp
+#define ll long long
+//solving using BIT/Fenwick Tree
+const int mxN = 1001;
+const int SQN = 35;
+int f[SQN][mxN] = {0};
+ll val[SQN] = {0}, sum[mxN]={0};
+int start[SQN], finish[SQN], ds[mxN], de[mxN], rev[mxN];
+int n, sqn, q;
+int dt=0;
+int level[mxN] = {0}, lookup[mxN];
+vector<int> adj[mxN];
+
+void dfs(int u=1, int p=0){
+    level[u]=level[p]+1;
+    ds[u]= ++dt;  //****** dt++ gives WA
+    rev[dt]=u;
+    for(int v: adj[u]){
+        if(v==p)
+            continue;
+        dfs(v, u);
+    }
+    de[u]=dt;
+}
+void clear(){
+    for(int i=0; i<mxN; ++i){
+        adj[i].clear();
+        sum[i]=level[i]=lookup[i]=rev[i]=ds[i]=de[i]=0;
+    }
+    for(int i=0; i<SQN; ++i){
+        for(int j=0; j<mxN; ++j)
+            f[i][j]=0;
+    }
+    for(int i=0; i<SQN; ++i)
+        val[i]=start[i]=finish[i]=0;
+    dt=0;
+}
+vector<ll> treeQueries(vector<vector<int>> &edges, vector<vector<int>> &queries)
+{   
+    
+	n = edges.size()+1;
+    vector<ll> ans;
+    clear();
+
+    for(int i=0; i<edges.size(); ++i){
+        int a=edges[i][0]+1, b=edges[i][1]+1;
+        adj[a].push_back(b);
+        adj[b].push_back(a);
+    }
+
+    dfs();
+    int sqn = sqrt(n);
+    int cur=1;
+    for(int i=1; i<=n; ){
+        int j=i;
+        start[cur]=i;
+        while(j<i+sqn && j<=n){
+            f[cur][level[rev[j]]]++;
+            j++;
+            lookup[j-1]=cur;
+        }
+        i=j;
+        finish[cur]=j-1;
+        ++cur;
+    }
+
+    for(int i=0; i<queries.size(); ++i){
+        int qt=queries[i][0];
+        if(qt==1){
+           int L = queries[i][1], x=queries[i][2];
+           for (int i = 1; i < cur; ++i) {
+             val[i] += 1LL * f[i][L + 1] * x;
+           }
+
+            sum[L+1] += x;
+        }else{
+            int v=queries[i][1]+1;
+            int x=lookup[ds[v]], y=lookup[de[v]];
+            ll res = 0;
+            for(int i=x; i<=y; ++i){
+              if (start[i] >= ds[v] && finish[i] <= de[v]) {
+                res += val[i];
+              } else if (start[i] < ds[v]) {
+                for (int j = ds[v]; j <= min(de[v], finish[i]); ++j)
+                  res += sum[level[rev[j]]];
+              } else {
+                for (int j = max(start[i], ds[v]); j <= de[v]; ++j)
+                  res += sum[level[rev[j]]];
+              }
+            }
+            ans.push_back(res);
+        }
+    }
+    return ans;
+}
+```
+## Queries $$
+You are given a tree that is rooted at node 1. Each vertex ‘v’ of the tree is having some color represented by color[v]. You are also given ‘Q’ queries. Each query is described by 2 integers ‘v’ and ‘k’. You have to answer how many colors are there which are appearing at least ‘k’ times in the subtree of vertex ‘v’.
+For Example:
+If N=3, edges=[ [1,2], [1,3] ], color=[1,2,2]
+If a query is v=1, k=2 then vertex 2 and vertex 3 have color 2 which is having frequency 2 so this will be included in our answer but vertex 1 has color 1 which is having frequency 1 which is less than 2 so it will not be included in our answer. Hence, the output will be 1. 
+```
+// 4
+
+// 3 1
+// 1 2 2
+// 1 2
+// 1 3
+// 1 2
+
+// 4 1
+// 1 1 3 3 
+// 1 2
+// 1 3
+// 3 4
+// 1 2
+
+// 4 2
+// 1 1 2 2
+// 1 3
+// 3 2
+// 2 4
+// 1 2
+// 4 2
+
+5 2
+1 1 2 1 2
+1 2
+3 5
+4 2
+2 5
+3 1
+4 1
+```
+
+```cpp
+#include <bits/stdc++.h>
+using namespace std;
+
+#define ll long long
+#define ff first
+#define ss second
+#define uint unsigned int
+#define cut 200
+#define ALL_THE(CAKE,LIE) for(auto LIE =CAKE.begin(); LIE != CAKE.end(); LIE++)
+#define tisic 47
+
+const int mxN = 1e5;
+
+struct fin {
+    vector<int> T;
+ 
+    int lastone(int x) {return x&(x^(x-1));}
+ 
+    void put(int pos, int val) {
+        for(int i =pos+1; i < T.size(); i +=lastone(i)) T[i] +=val;
+        }
+ 
+    int get(int pos) {
+        int ret =0;
+        for(int i =pos+1; i > 0; i -=lastone(i)) ret +=T[i];
+        return ret;}
+};
+// void countI(int R, vector< pair<int,int> > &I, vector<int> &par, vector< vector<int> > &G) {
+//     for(auto it=G[R].begin(); it != G[R].end(); it++){
+//       if (*it != par[R]) {
+//         I[*it].ff = I[R].ss;
+//         I[*it].ss = I[R].ss + 1;
+//         countI(*it, I, par, G);
+//         I[R].ss += I[*it].ss - I[*it].ff;
+//       }
+//     }
+// }
+
+
+
+void countI(int R, vector< pair<int,int> > &I, vector<int> &par, vector< vector<int> > &G) {
+    ALL_THE(G[R],it) if(*it != par[R]) {
+        I[*it].ff =I[R].ss;
+        I[*it].ss =I[R].ss+1;
+        countI(*it,I,par,G);
+        I[R].ss +=I[*it].ss-I[*it].ff;}
+    }
+
+
+vector<int> queries(int N, int Q, vector<int> &color, vector<vector<int>> &edges, vector<vector<int>> &queries)
+{
+    vector<int> ans;
+
+    // vector<vector<int>> adj(N);
+
+    // int a, b;
+    // for(int i=0; i<edges.size(); ++i){
+    //     a=edges[i][0], b=edges[i][1];
+    //     --a, --b;
+    //     adj[a].push_back(b);
+    //     adj[b].push_back(a);
+    // }
+
+
+    // vector<int> par(N, -1);
+    // vector<int> seq;
+    // par[0]=0;
+    // queue<int> q;
+    // q.push(0);
+    // while(!q.empty()){
+    //     a=q.front();
+    //     seq.push_back(a);
+    //     for(auto it= adj[a].begin(); it !=adj[a].end(); it++){
+    //         if(par[*it]==-1){
+    //             par[*it]=a;
+    //             q.push(*it);
+    //         }
+    //     }
+    //     q.pop();
+    // }
+
+    // vector<int> seqI(N);
+    // for(int i=0; i<N; ++i) seqI[seq[i]]=i;
+
+    // vector<pair<int, int>> I(N, {0, 1});
+    // countI(0, I, par, adj);
+
+    // vector<vector<int>> parE(20, vector<int>(N));
+    // parE[0] = par;
+    // for (int i = 1; i < 20; i++)
+    //   for (int j = 0; j < N; j++)
+    //     parE[i][j] = parE[i - 1][parE[i - 1][j]];
+
+    // vector<int> pC(mxN + 1, 0);
+    // vector<int> isC(mxN + 1, -1);
+    // for (int i = 0; i < N; i++)
+    //   pC[C[i]]++;
+
+    // int f = 0;
+    // for (int i = 0; i <= mxN; i++)
+    //   if (pC[i] > 0)
+    //     f++;
+    // vector<int> C1;
+    // for (int i = 0; i <= mxN; i++)
+    //   if (pC[i] >= BLK) {
+    //     isC[i] = C1.size();
+    //     C1.push_back(i);
+    //   }
+    
+    // vector<vector<int>> S1(C1.size(), vector<int>(N+1, 0));
+    // for(int i=0; i<N; i++)
+    //      if(isC[C[i]] >= 0) S1[isC[C[i]]][I[i].ff+1]++;
+         
+    // for(uint i =0; i < C1.size(); i++)
+    //     for(int j =0; j < N; j++) S1[i][j+1] +=S1[i][j];
+    
+    // vector<vector<int>> S2(BLK, vector<int>(N, 0));
+
+    // fin F; F.T.resize(N+1,0);
+    // vector<vector<int>> sp(mxN+1);
+
+    // for(int i=N-1; i>=0; i--)
+    //   if(pC[C[seq[i]]] < BLK) 
+    //     sp[C[seq[i]]].push_back(i);
+    
+    // set<int> S;
+    // for(int i=0; i<=mxN; i++){
+    //   for(uint j=0; j<sp[i].size(); j++){
+    //     F.put( I[seq[sp[i][j]]].ff, 1);
+    //     S.insert(sp[i][j]);
+    //   }
+
+    //   while(!S.empty()){
+    //     a = seq[*S.rbegin()];
+    //     S.erase(--S.end());
+    //      b = F.get(I[a].ss-1)-F.get(I[a].ff-1);
+    //     S2[b][a]++;
+
+    //     if(F.get(N-1)==b) continue;
+    //     int x=a, k=19;
+    //     while( k >=0 && x>0){
+    //       int y = parE[k][x];
+    //       if(F.get(I[y].ss-1)-F.get(I[y].ff-1) != b) k--;
+    //       else x=y;
+    //     }
+
+    //     S.insert(seqI[par[x]]);
+    //     S2[b][par[x]]--;
+    //   }
+
+    //   for(uint j=0; j<sp[i].size(); j++) F.put( I[seq[sp[i][j]]].ff, -1);
+    // }
+
+    // for(int i=1; i<BLK; i++)
+    //   for(int j=N-1; j>0; j--)
+    //     S2[i][par[seq[j]]] += S2[i][seq[j]];
+    
+    // for(int i=0; i<N; i++){
+    //   a=0;
+    //   for(int j=0; j<BLK; j++)
+    //     a += S2[j][i];
+    //   S2[0][i] = f-C1.size()-a;
+    // }
+
+    // for(int i=0; i<N; i++)
+    //   for(int j=0; j<BLK-1; j++)
+    //     S2[j+1][i] += S2[j][i];
+    
+    // for(int i=0; i<queries.size(); ++i){
+    //   a=queries[i][0]; b=queries[i][1];
+    //   a--;
+    //   int res=0;
+    //   for(uint i=0; i<C1.size(); i++)
+    //     res += (int)(S1[i][ I[a].ss] - S1[i][ I[a].ff] >=b);
+      
+    //   if(b <= BLK) res += f-C1.size()-S2[b-1][a];
+    //   ans.push_back(res);
+    // }
+
+    vector<int> C(N);
+
+    for(int i=0; i<N; ++i) C[i]= color[i+1];
+
+    // for(auto i: C) cout << i << " ";
+    // cout << endl;
+    // return {};
+
+    int a, b;
+     vector< vector<int> > G(N);
+    for(int i =1; i < N; i++) {
+        a=edges[i-1][0];
+        b=edges[i-1][1];
+
+        G[--a].push_back(--b);
+        G[b].push_back(a);}
+ 
+    vector<int> par(N,-1);
+    vector<int> seq;
+    par[0] =0;
+    queue<int> q;
+    q.push(0);
+    while(!q.empty()) {
+        a =q.front();
+        seq.push_back(a);
+        ALL_THE(G[a],it) if(par[*it] == -1) {
+            par[*it] =a;
+            q.push(*it);}
+        q.pop();}
+    vector<int> seqI(N);
+    for(int i =0; i < N; i++) seqI[seq[i]] =i;
+ 
+    // skonvertuj na intervaly
+    vector< pair<int,int> > I(N,make_pair(0,1));
+    countI(0,I,par,G);
+ 
+    // LCA predratanie
+    vector< vector<int> > parE(20,vector<int>(N));
+    parE[0] =par;
+    for(int i =1; i < 20; i++) for(int j =0; j < N; j++)
+        parE[i][j] =parE[i-1][parE[i-1][j]];
+ 
+    // caste farby
+    vector<int> pC(100000+tisic,0);
+    vector<int> isC(100000+tisic,-1);
+    for(int i =0; i < N; i++) pC[C[i]]++;
+    int f =0;
+    for(int i =0; i <= 100000; i++) if(pC[i] > 0) f++;
+    vector<int> C1;
+    for(int i =0; i <= 100000; i++) if(pC[i] >= cut) {
+        isC[i] =C1.size();
+        C1.push_back(i);}
+    vector< vector<int > > S1(C1.size(),vector<int>(N+1,0));
+    for(int i =0; i < N; i++)
+        if(isC[C[i]] >= 0) S1[isC[C[i]]][I[i].ff+1]++;
+    for(uint i =0; i < C1.size(); i++)
+        for(int j =0; j < N; j++) S1[i][j+1] +=S1[i][j];
+ 
+    // vzacne farby
+    vector< vector<int> > S2(cut, vector<int>(N,0));
+    fin F; F.T.resize(N+1,0);
+    vector< vector<int> > sp(100000+tisic);
+    for(int i =N-1; i >= 0; i--) if(pC[C[seq[i]]] < cut) sp[C[seq[i]]].push_back(i);
+    // i vyskytov
+    set<int> S;
+    for(int i =0; i <= 100000; i++) {
+        for(uint j =0; j < sp[i].size(); j++) {
+            F.put(I[seq[sp[i][j]]].ff,1);
+            S.insert(sp[i][j]);}
+ 
+        while(!S.empty()) {
+            a =seq[*S.rbegin()];
+            S.erase(--S.end());
+            b =F.get(I[a].ss-1)-F.get(I[a].ff-1);
+            S2[b][a]++;
+            // binsearch vrchol po ktory to ide
+            if(F.get(N-1) == b) continue;
+            int x =a, k =19;
+            while(k >= 0 && x > 0) {
+                int y =parE[k][x];
+                if(F.get(I[y].ss-1)-F.get(I[y].ff-1) != b) k--;
+                else x =y;}
+            S.insert(seqI[par[x]]);
+            S2[b][par[x]]--;}
+ 
+        for(uint j =0; j < sp[i].size(); j++) F.put(I[seq[sp[i][j]]].ff,-1);}
+ 
+    // do otcov
+    for(int i =1; i < cut; i++) for(int j =N-1; j > 0; j--)
+        S2[i][par[seq[j]]] +=S2[i][seq[j]];
+    
+    for(int i =0; i < N; i++) {
+        a =0;
+        for(int j =0; j < cut; j++) a +=S2[j][i];
+        S2[0][i] =f-C1.size()-a;}
+    // dopln na < i
+    for(int i =0; i < N; i++) for(int j =0; j < cut-1; j++)
+        S2[j+1][i] +=S2[j][i];
+ 
+    // odpovede
+    for(int q =0; q < Q; q++) {
+       a=queries[q][0];
+       b=queries[q][1];
+        a--;
+        int res=0;
+        // prirataj caste
+        for(uint i =0; i < C1.size(); i++) res +=(int)(S1[i][I[a].ss]-S1[i][I[a].ff] >= b);
+        // prirataj vzacne
+        if(b <= cut) res +=f-C1.size()-S2[b-1][a];
+        // cout << res << " ";
+        ans.push_back(res);
+
+        }
+        // cout << endl;
+    return ans;
+}
+```
+
+## Connect Color
+You are given a tree having ‘N’ nodes. Each node ‘v’ has color 'color(v)' and cost 'cost(u)'. You have to answer ‘Q’ queries. In each query, you are given two nodes ‘a’ and ‘b’. For every node ‘c’ and ‘d’ which exist in the path from ‘a’ to ‘b’ you can merge them if the following conditions hold:
+‘c’ and ‘d’ should have the same color.
+They are successive nodes of the same color on path from ‘a’ to ‘b’.
+For merging two nodes ‘c’ and ‘d’ which satisfy the above conditions the cost will be (cost[c]-cost[d])^2. You have to merge every possible color node except the color of the LCA of ‘a’ and ‘b’.
+You have to output the sum of the cost of merging every possible nodes ‘c’ and ‘d’.
+```cpp
+#include <bits/stdc++.h>
+const int N = 2005;
+//https://www.codechef.com/problems/VLB?tab=statement
+vector<vector<int>> anc;
+vector<int> adj[N], level;
+int LOG, C[N], in[N], out[N], who[2*N], timer, BLK;
+bool vis[N];
+int res, ans[N], h[N];
+int n;
+
+struct query{
+    int l, r, lc, id;
+    bool operator<(const query& rhs){
+        if(l/BLK != rhs.l/BLK){
+            return l/BLK < rhs.l/BLK;
+        }
+        return (l/BLK & 1 ? r < rhs.r : r > rhs.r);
+    }
+};
+
+void dfs(int u=1, int p=0){
+    in[u] = ++timer;
+    who[timer]=u;
+    for(auto i: adj[u]){
+        if(i==p) continue;
+        level[i] = level[u]+1;
+        anc[i][0] = u;
+        dfs(i, u);
+    }
+    out[u] = ++timer;
+    who[timer] = u;
+}
+
+int lca(int u, int v){
+    if(level[u] < level[v]) swap(u, v);
+    int k = level[u]-level[v];
+    for(int j=LOG-1; ~j; --j){
+        if(k & (1<<j))
+            u = anc[u][j];
+    }
+    if(u==v) return u;
+    for(int j=LOG-1; ~j; --j){
+        if(anc[u][j] != anc[v][j]){
+            u = anc[u][j];
+            v = anc[v][j];
+        }
+    }
+    return anc[u][0];
+}
+
+void build(){
+    LOG = __lg(n) + 1;
+    anc.resize(n+1);
+    for(auto& i: anc) i.resize(LOG);
+    level.resize(n+1);
+    dfs();
+    for(int j=1; j<LOG; ++j)
+        for(int i=1; i<=n; ++i)
+            anc[i][j] = anc[anc[i][j-1]][j-1];
+}
+
+deque<int> tmp;
+
+int dis(int x, int y){
+    return (h[x]-h[y])*(h[x]-h[y]);
+}
+
+void upd_left(int u, int c){
+    if(C[u] != c) return;
+    if(vis[u]){
+        tmp.pop_front();
+        if(!tmp.empty())
+            res -= dis(tmp.front(),u);
+    }else{
+        if(!tmp.empty())
+            res += dis(tmp.front(), u);
+        tmp.push_front(u);
+    }
+    vis[u] ^= 1;
+}
+
+void upd_right(int u, int c){
+    if(C[u] != c) return;
+    if(vis[u]){
+        tmp.pop_back();
+        if(!tmp.empty())
+            res -= dis(tmp.back(), u);
+    }else{
+        if(!tmp.empty())
+            res += dis(tmp.back(), u);
+        tmp.push_back(u);
+    }
+    vis[u] ^= 1;
+}
+
+void solve(vector<query>& q, int c){
+    tmp.clear();
+    int l=q[1].l, r=q[1].l-1;
+    for(auto& i: q){
+        while(l < i.l) upd_left(who[l++], c);
+        while(r < i.r) upd_right(who[++r], c);
+        while(l > i.l) upd_left(who[--l], c);
+        while(r > i.r) upd_right(who[r--], c);
+
+        if(c != C[i.lc])
+            ans[i.id] += res;
+
+    }
+}
+void clear(){
+    timer = 0;
+    res = 0;
+    memset(vis, 0, sizeof(vis));
+    memset(in, 0, sizeof(in));
+    memset(out, 0, sizeof(out));
+    memset(who, 0, sizeof(who));
+    memset(ans, 0, sizeof(ans));
+    level.clear();
+    for(int i=0; i<N; ++i)
+        adj[i].clear();
+}
+vector<int> connectColor(int _n, int nq, vector<int> &color, vector<int> &cost, vector<vector<int>> &edges, vector<vector<int>> &q){
+    n = _n;
+    clear();
+    
+    for (int i = 0; i < edges.size(); ++i) {
+      int u = edges[i][0];
+      int v = edges[i][1];
+      adj[u].push_back(v);
+      adj[v].push_back(u);
+    }
+
+    for(int i=1; i<=n; ++i){
+        C[i] = color[i-1];
+        h[i] = cost[i-1];
+    }
+
+    build();
+    
+    vector<query> queries(nq+1);
+    for(int i=1; i<=nq; ++i){
+        int u = q[i-1][0], v = q[i-1][1];
+        if(in[u] > in[v]) swap(u, v);
+        queries[i].id = i;
+        queries[i].lc = lca(u, v);
+        if(queries[i].lc == u){
+            queries[i].l = in[u];
+        }else{
+            queries[i].l = out[u];
+        }
+        queries[i].r = in[v];
+    }
+    
+
+    BLK = (int) sqrt(timer)+1;
+    sort(queries.begin()+1, queries.end());
+    for(int c=0; c<=10; ++c){
+        res = 0;
+        solve(queries, c);
+    }
+        
+    
+    vector<int> ret(nq);
+
+    for(int i=1; i<=nq; ++i){
+        ret[i-1] = ans[i];
+    }
+    return ret;
+
+}
+```
+
+## Catch Pokemon
+There are ‘N’ cities in Pokeland, and they are connected by ‘N-1’ roads. It is possible to reach from any city to any other city and there is a unique path between each pair of cities.
+Each city has one Pokemon represented by an integer between 1 and 10^9. In each city. Given queries in the form of pairs of cities ‘U’ and ‘V’, find the number of Pokemon Ash catches while traveling from city ‘U’ to ‘V’. If he already has a Pokemon ‘X’ and he comes across it again, he does NOT catch it.
+Note: Each query is independent, that is, he starts each query with zero Pokemon.
+```cpp
+//no of distinct values in the path btw 2 nodes u, v 
+#include <bits/stdc++.h>
+
+const int mxN = 1e4+5, mxM = 1e5+5;
+const int LOG = 19;
+
+int a[mxN], level[mxN], anc[LOG][mxN], val[mxN], ans[mxM];
+int d[mxN], l[mxN], r[mxN];
+int BLK[mxN<<1], ID[mxN<<1];
+bool vis[mxN];
+vector<int> adj[mxN];
+int N, M, cur;
+
+struct query{
+    int id, l, r, lc;
+    bool operator<(const query& rhs){
+        return (BLK[l]==BLK[rhs.l]) ? (r<rhs.r) : (BLK[l]<BLK[rhs.l]);
+    }
+} Q[mxM];
+
+void dfs(int u, int p){
+    l[u] = ++cur;
+    ID[cur] = u;
+    
+    for(int i=1; i<LOG; ++i)
+        anc[i][u] = anc[i-1][anc[i-1][u]];
+
+    for(int i=0; i<adj[u].size(); ++i){
+        int v = adj[u][i];
+        if(v==p) continue;
+        level[v]=level[u]+1;
+        anc[0][v]=u;
+        dfs(v, u);
+    }
+    r[u] = ++cur;
+    ID[cur] = u;
+}
+int lca(int u, int v){
+    if(level[u] > level[v]) swap(u, v);
+
+    for(int i=LOG-1; ~i; --i){
+        if(level[v]-(1<<i) >= level[u])
+            v = anc[i][v];
+    }
+    if(u==v) return u;
+    for(int i=LOG-1; ~i; --i){
+        if(anc[i][u] != anc[i][v]){
+            u = anc[i][u];
+            v = anc[i][v];
+        }
+    }
+    return anc[0][u];
+}
+inline void check(int x, int& res){
+    if( vis[x] && (--val[a[x]]==0)) res--;
+    else if( !vis[x] && (val[a[x]]++ ==0)) res++;
+    vis[x] ^=1;
+}
+void solve(){
+     int curL = Q[0].l, curR = Q[0].l - 1, res = 0;
+
+    for (int i = 0; i < M; i++)
+    {
+        while (curL < Q[i].l) check(ID[curL++], res);
+
+        while (curL > Q[i].l) check(ID[--curL], res);
+        
+        while (curR < Q[i].r) check(ID[++curR], res);
+
+        while (curR > Q[i].r) check(ID[curR--], res);
+
+        int u = ID[curL], v = ID[curR];
+
+        // If LCA not part of the range
+        if (Q[i].lc != u and Q[i].lc != v)
+            check(Q[i].lc, res);
+
+        ans[Q[i].id] = res;
+
+        if (Q[i].lc != u && Q[i].lc != v)
+            check(Q[i].lc, res);
+    }
+}
+vector<int> countPokemon(int n, vector<pair<int,int>> edges, vector<int> poke, int nq, vector<pair<int,int>> q){
+    cur = 0;
+    memset(vis, 0, sizeof(vis));
+    memset(val, 0, sizeof(val));
+    for(int i=1; i<=N; ++i)
+        adj[i].clear();
+
+    for(auto i: edges){
+        adj[i.first].push_back(i.second);
+        adj[i.second].push_back(i.first);
+    }
+
+    N = n;
+    M = q.size();
+    int c = 0;
+    map<int, int> mp;
+
+    for(int i=0; i<n; ++i) mp[poke[i]]++;
+    for(auto& i: mp) i.second = c++;
+    for(int i=1; i<=n; ++i) a[i] = mp[poke[i-1]];
+
+    anc[0][1]=1;
+    dfs(1, -1);
+    int sz = sqrt(cur);
+    for(int i=1; i<=cur; i++)
+        BLK[i] = (i-1)/sz+1;
+    
+    for(int i=0; i<M; ++i){
+        int u=q[i].first, v=q[i].second;
+        Q[i].lc = lca(u, v);
+        if(l[u] > l[v])
+            swap(u, v);
+        if(Q[i].lc == u)
+            Q[i].l = l[u], Q[i].r = l[v];
+        else
+            Q[i].l = r[u], Q[i].r = l[v];
+        Q[i].id = i;
+    }
+
+    sort(Q, Q+M);
+    solve();
+
+    vector<int> ret(M);
+    for(int i=0; i<M; ++i)
+        ret[i] = ans[i];
+    return ret;
+    
+}
+```
+
+
