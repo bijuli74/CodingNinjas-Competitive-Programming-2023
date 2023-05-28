@@ -1666,3 +1666,241 @@ int uniquePaths(int n, int m) {
 	return dp[n-1][m-1];
 }
 ```
+
+## Ninja And His Students
+Ninja has 'N' students number from 1 to 'N', and he graded their recent assessments and assigned marks. You are assigned to guess the relative marks of the students. Given a list 'RELATIONS' containing 'K' pair of numbers 'X' and 'Y' stating that student 'X' has a lower rank than student 'Y', your task is to find and print the rank of each student in a class.
+Return a vector containing ‘N’ elements from 1 to 'N' sorted according to the rank, if two students have same rank then student with the less number will come first.
+Note: There will not be cycle forming among any student group
+EXAMPLE:
+Input: N = 3, K = 2
+RELATIONS = [[1, 2], [2, 3]]
+
+Output: [3, 2, 1]
+
+In the given test case, student 2 has a higher rank than student 1, and student 3 has a higher rank than student 1. hence student one should be topper with rank 1, and then student two will have rank 2, and student three will have rank 3. So, we will print [1, 2, 3].
+
+```cpp
+/*
+Time complexity: O(N * LogN)
+Space complexity: O(N + K)
+Where 'N' is the number of students in the class and 'K' is the number of relations between them.
+*/
+#include <queue>
+vector<int> rankOfEach(int n, int k, vector<vector<int>> &relations) {
+// Declaring the 'adjacencyList' , 'answer' and 'indegree' vectors.
+vector<vector<int>> adjacencyList(n);
+vector<int> indegree(n, 0);
+vector<int> answer, visited(n, 0);
+vector<pair<int, int>> order;
+// Looping over the 'relations' and updating the 'adjacencyList' and 'indegree.
+for (int i = 0; i < relations.size(); i++) {
+indegree[relations[i][0] - 1]++;
+adjacencyList[relations[i][1] - 1].push_back(relations[i][0] - 1);
+}
+// Initializing the 'bfs' queue.
+priority_queue<pair<int, int>> bfs;
+for (int i = 0; i < n; i++) {
+if (indegree[i] == 0) {
+bfs.push({-i, 1});
+visited[i] = 1;
+}
+}
+// Running a loop till current queue is not empty.
+while (!bfs.empty()) {
+// Extracting the top element.
+pair<int, int> f = bfs.top();
+bfs.pop();
+f.first *= -1;
+// Pushing the current order pair.
+order.push_back({f.second, f.first});
+// Iterating over all elements of the current adjacent.
+for (int i = 0; i < adjacencyList[f.first].size(); i++) {
+// Condition when current node is not visited.
+if (visited[adjacencyList[f.first][i]] == 0) {
+indegree[adjacencyList[f.first][i]]--;
+if (indegree[adjacencyList[f.first][i]] == 0) {
+visited[adjacencyList[f.first][i]] = 1;
+bfs.push({-1 * adjacencyList[f.first][i], f.second + 1});
+}
+}
+}
+}
+// Sorting out the order.
+sort(order.begin(), order.end());
+// Placing elements order wise.
+for (pair<int, int> current : order) {
+answer.push_back(current.second + 1);
+}
+return answer;
+}
+```
+
+## New Year Transportation
+New Year Transportation
+New Year is coming in Line World! In this world, there are n cells numbered by integers from 1 to n, as a 1 × n board. People live in cells. However, it was hard to move between distinct cells, because of the difficulty of escaping the cell. People wanted to meet people who live in other cells.
+So, user tncks0121 has made a transportation system to move between these cells, to celebrate the New Year. First, he thought of n - 1 positive integers a1, a2, ..., an - 1. For every integer i where 1 ≤ i ≤ n - 1 the condition 1 ≤ ai ≤ n - i holds. Next, he made n - 1 portals, numbered by integers from 1 to n - 1. The i-th (1 ≤ i ≤ n - 1) portal connects cell i and cell (i + ai), and one can travel from cell i to cell (i + ai) using the i-th portal. Unfortunately, one cannot use the portal backwards, which means one cannot move from cell (i + ai) to cell i using the i-th portal. It is easy to see that because of condition 1 ≤ ai ≤ n - i one can't leave the Line World using portals.
+Currently, I am standing at cell 1, and I want to go to cell d. However, I don't know whether it is possible to go there. Please determine whether I can go to cell d by only using the construted transportation system.
+
+```cpp
+#include<bits/stdc++.h>
+using namespace std;
+
+// const int mxN = 30005;
+
+// vector<int> adj[mxN];
+// vector<bool> vis(mxN, false);
+
+// void dfs(int u){
+//     vis[u]=true;
+//     for (int v : adj[u]) {
+//       if (!vis[v])
+//         dfs(v);
+//     }
+// }
+
+// void solve(){
+//     int n; cin>>n;
+    
+//     for(int i=1; i<n; ++i){
+//         int a; cin>>a;
+//         adj[i].push_back(i+a);
+//     }
+
+//     dfs(1);
+
+//     int Q; cin>>Q;
+//     while(Q--){
+//         int des; cin>>des;
+//       if (vis[des])
+//         cout << "YES\n";
+//       else
+//         cout << "NO\n";
+//     }
+// }
+
+
+
+void solve() {
+  int n; cin>>n;
+    vector<int> a(1000000);
+  for (int i = 1; i < n; i++) {
+    cin>> a[i];
+  }
+
+  int q; 
+  cin>>q;
+  while(q--){
+    int t; cin>>t;
+    int x = 1;
+    while (x < t) {
+      x += a[x];
+    }
+    
+    if(x==t) cout << "YES\n";
+    else cout << "NO\n";
+  }
+
+}
+
+int main(){
+    int t; cin>>t;
+    // for (int i = 0; i < mxN; ++i) {
+    //   adj[i].clear();
+    //   vis[i] = false;
+    // }
+
+    while (t--) {
+      solve();
+    }
+
+    return 0;
+    
+}
+```
+
+## Number of Islands II
+You have a 2D grid of ‘N’ rows and ‘M’ columns which are initially filled with water. You are given ‘Q’ queries each consisting of two integers ‘X’ and ‘Y’ and in each query operation, you have to turn the water at position (‘X’, ‘Y’) into a land. You are supposed to find the number of islands in the grid after each query.
+An island is a group of lands surrounded by water horizontally, vertically, or diagonally.
+
+```cpp
+#include <bits/stdc++.h>
+
+class DSU {
+private:
+  vector<int> parent;
+  vector<int> size;
+
+public:
+  void make_set(int v) {
+    for (int i = 0; i < v; ++i) {
+      parent.push_back(i);
+      size.push_back(1);
+    }
+  }
+  int find_set(int v) {
+    if (v == parent[v]) {
+      return v;
+    }
+    return parent[v] = find_set(parent[v]);
+  }
+  void union_sets(int a, int b) {
+    a = find_set(a);
+    b = find_set(b);
+    if (a != b) {
+      if (size[a] < size[b])
+        swap(a, b);
+      parent[b] = a;
+      size[a] += size[b];
+    }
+  }
+};
+
+bool isValid(int x, int y, int n, int m) {
+  return (x >= 0 && x < n && y >= 0 && y < m);
+}
+
+vector<int> numOfIslandsII(int n, int m, vector<vector<int>> &queries) {
+  vector<int> res;
+
+  DSU dsu;
+  dsu.make_set(m * n);
+
+  vector<vector<int>> visited(n, vector<int>(m, 0));
+  int count = 0;
+  for (auto &query : queries) {
+    int x = query[0];
+    int y = query[1];
+    // if the current coordinate is already an island then
+    // just include the count and move on
+    if (visited[x][y]) {
+      res.push_back(count);
+    }
+    // if the given coordinate is not an island, so include it
+    // in island and increment the count
+    else {
+      visited[x][y] = 1;
+      ++count;
+      // check in the 4 direction if it share side with other
+      // island so that we make it as part of them
+      int currIsland = (x * m) + y;
+      int directions[4][2] = {{-1, 0}, {0, -1}, {1, 0}, {0, 1}};
+      for (auto &direction : directions) {
+        int newX = x + direction[0];
+        int newY = y + direction[1];
+        if (isValid(newX, newY, n, m)) {
+          int adjIsland = (newX * m) + newY;
+          // if the adj cell is an valid island and is in differnt set then
+          // combine both of them
+          if (visited[newX][newY] &&
+              (dsu.find_set(currIsland) != dsu.find_set(adjIsland))) {
+            --count;
+            dsu.union_sets(currIsland, adjIsland);
+          }
+        }
+      }
+      res.push_back(count);
+    }
+  }
+  return res;
+}
+```
