@@ -593,3 +593,103 @@ vector<int> countNodesInAllSubtrees(int n, vector<vector<int>> &adj) {
 	return ans;
 }
 ```
+## Kth Ancestor
+Ninja found a family tree with ‘N’ members labeled from 0 to ‘N’-1. These ‘N’ members are connected by ‘N’-1 edges in the form of an N-ary tree. Now, Ninja is excited to find the K’th ancestor of each of the members of the family. Can you help Ninja to find the Kth ancestor of each of the members?
+You are given an N-ary tree having ‘N’ vertices labeled from 0 to ‘N’-1 and an integer ‘K’. Your task is to find the Kth ancestor of each node. If the Kth ancestor doesn’t exist, print -1 corresponding to that.
+
+```cpp
+#include <bits/stdc++.h>
+using namespace std;
+
+// const int mxN = 1e6;
+// int d[mxN], anc[mxN][20];
+// vector<int> adj[mxN];
+
+// void dfs(int u = 0, int p = -1) {
+//   anc[u][0] = p;
+//   for (int i = 1; i < 19; ++i)
+//     anc[u][i] = ~anc[u][i - 1] ? anc[anc[u][i - 1]][i - 1] : -1;
+
+//   for (int v : adj[u]) {
+//     if (v == p)
+//       continue;
+//     d[v] = d[u] + 1;
+//     dfs(v, u);
+//   }
+// }
+
+
+// vector<int> kthAncestor(int n, int k, vector<vector<int>> &edges)
+// {
+//   for (int i = 0; i < mxN; ++i) {
+//     adj[i].clear();
+//     // d[i]=0;
+//   }
+//   for (int i = 0; i < edges.size(); ++i) {
+//     int p, c;
+//     p = edges[i][0];
+//     c = edges[i][1];
+//     adj[p].push_back(c);
+//   }
+
+//   dfs();
+
+//   vector<int> ans;
+//   for(int node=0; node<n; ++node){
+
+//     if (d[node] < k)
+//       ans.push_back(-1);
+//     else {
+//       for (int i = 19; ~i; --i)
+//         if (k >> i & 1)
+//           node = anc[node][i];
+          
+//       ans.push_back(node);
+//     }
+    
+//   }
+
+//   return ans;
+// }
+
+const int N = 1e6 + 1;
+vector<int> graph[N];
+int parent[N];
+
+void dfs(int u, int p) {
+  parent[u] = p;
+  for (int v : graph[u]) {
+    if (v != p) {
+      dfs(v, u);
+    }
+  }
+}
+
+void clr() { for (int i = 0; i < N; ++i) {
+  graph[i].clear();
+  parent[i]=0;
+}
+}
+vector<int> kthAncestor(int n, int k, vector<vector<int>> &edges) {
+  clr();
+
+  vector<int> ans(n);
+  for (auto e : edges) {
+    graph[e[0]].push_back(e[1]);
+    graph[e[1]].push_back(e[0]);
+  }
+  dfs(0, -1);
+  for (int i = 0; i < n; i++) {
+    int p = i;
+    for (int j = 0; j < k; j++) {
+      if (p == -1) {
+        ans[i] = -1;
+        break;
+      }
+      p = parent[p];
+    }
+    ans[i] = p;
+  }
+  return ans;
+}
+```
