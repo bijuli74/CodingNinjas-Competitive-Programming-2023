@@ -240,3 +240,274 @@ int main() {
     return 0;
 }
 ```
+## Catalan Number
+You are given an integer n. Your task is to find the nth catalan number. nth Catalan number is defined using following expression: C_n = 1/(n+1) * 2nCn
+``cpp
+#include<bits/stdc++.h>
+using namespace std;
+
+#define ll long long
+#define fast_io ios::sync_with_stdio(0); cin.tie(0);
+const int mxA=1e6, M=1e9+7;
+ll iv[mxA+1], f1[mxA+1], f2[mxA+1];
+
+void solve(){
+
+    iv[1]=1;                         //Calculating mod inverse of all nos 2 to mxA
+    for(int i=2; i<=mxA; ++i) 
+        iv[i]=M-M/i*iv[M%i]%M;
+
+    f1[0]=f2[0]=1;
+    for(int i=1; i<=mxA; ++i){
+        f1[i]=i*f1[i-1]%M;
+        f2[i]=f2[i-1]*iv[i]%M;
+    }
+
+}
+int main(){
+    fast_io
+    int t; cin>>t;
+    solve();
+
+    while(t--){
+        int n; cin>>n;
+        int n2 = n*2;
+        ll ans = f1[n2]*f2[n]%M*f2[n]%M*iv[n+1]%M;
+        cout<<ans<<'\n';
+    }
+   
+    return 0;
+}
+```
+## Spoj Hollow Live Problem
+```cpp
+#include<bits/stdc++.h>
+using namespace std;
+
+const int N = 1e5;
+long long pre[N+1];
+int rem[N+1];
+
+int main(){
+
+	int c , n, x;
+
+	while(true){
+		cin>>c>>n;
+
+		if(c+n == 0) break;
+
+		//rem[i] = position where prefix_sum % c = i 
+		for(int i=1;i<c;i++) rem[i] = -1;
+		rem[0] = 0;
+
+		for(int i=1;i<=n;i++) {
+			cin>>x;
+			pre[i] = pre[i-1] + x;
+		}
+
+		for(int i=1;i<=n;i++){
+			int r = pre[i] % c;
+
+			if(rem[r] != -1){
+				for(int L = rem[r]+1;L<=i;L++) cout<<L<<" ";
+				cout<<endl;
+				break;
+			}
+			else{
+				rem[r] = i;
+			}
+		}
+	}
+
+}
+```
+## Number of Solutions
+You are given the following equation:
+X1 + X2 + ⋯ + Xk = N
+Your task is to find the number of solutions of this equation, such that xi ≥ 0.
+```cpp
+#include<bits/stdc++.h>
+using namespace std;
+
+#define ll long long
+#define fast_io ios::sync_with_stdio(0); cin.tie(0);
+
+const int mxA = 1e6;
+const int M = 1e9+7;
+
+ll iv[mxA+1], f1[mxA+1], f2[mxA+1];
+int main(){
+    fast_io
+    int t; cin>>t;
+    iv[1]=1;
+    for(int i=2; i<=mxA; ++i)
+        iv[i]=M-M/i*iv[M%i]%M;
+    f1[0]=f2[0]=1;
+    for(int i=1; i<=mxA; ++i){
+        f1[i]=i*f1[i-1]%M;
+        f2[i]=f2[i-1]*iv[i]%M;
+    }
+    ll n, r;
+    while(t--){
+        cin>>n>>r;
+        ll ans = f1[n+r-1]*f2[r-1]%M*f2[n]%M;
+        cout<<ans<<'\n';
+    }
+    return 0;
+}
+```
+
+## Jumbling Pens
+You are given a total of ‘N’ pens. Out of which ‘R’ pens are Red, ‘G’ pens are green, and ‘B’ pens are blue. Pens of the same color are identical. We need to tell the distinct number of orderings of these pens we can achieve by jumbling them in any possible way since the answer can be huge print it modulo (10^9+7).
+For Example:
+‘N’ = 4, ‘R’ = 3, ‘G’ = 1, and ‘B’ = 0
+
+All the possible distinct ordering are as follows:
+
+G R R R
+R G R R
+R R G R
+R R R G
+
+Note that swapping or jumbling pens of the same colors doesn’t create a new ordering. 
+As the total number of distinct arrangements is 4. Hence the output will be 4.
+
+```cpp
+#define ll long long
+const int mxA = 1e6;
+const int M = 1e9 + 7;
+
+ll iv[mxA+1], f1[mxA+1], f2[mxA+1];
+void precal(){
+    if(f1[0]==1) return; //already calculated;
+
+    iv[1]=1;
+    for(int i=2; i<=mxA; ++i)
+        iv[i]=M-M/i*iv[M%i]%M;
+    f1[0]=f2[0]=1;
+    for(int i=1; i<=mxA; ++i){
+        f1[i]=i*f1[i-1]%M;
+        f2[i]=f2[i-1]*iv[i]%M;
+    }
+}
+int jumbledPens(int n, int r, int g, int b)
+{   
+    precal();
+
+    ll ans = f1[n] * f2[r]%M * f2[g]%M * f2[b]%M;
+    return ans;
+	
+}
+```
+
+## Non-Divisible Set $
+A range of integers from 1 to ‘N’ is given to you. You are also given a set of integers. Return the number of integers in the given range which are not divisible by any of the elements of the given set.
+For Example:
+‘N’ = 7, ‘Set’ = [2, 3]
+
+Integers in the range [1, 7] that are not divisible by any of the elements of the given set are [1, 5, 7].
+The total number of non-divisible integers is 3. Hence the output will be 3.
+```cpp
+#include <bits/stdc++.h>
+
+#define ll long long
+ll calcLCM(ll a, ll b){
+	if(a==0) return b;
+	return (a*b)/ __gcd(a, b);
+}
+
+int includedElements(int n, vector<int> &set)
+{	
+	ll k = set.size();
+
+	ll res=0;
+	for(int mask=1; mask<(1<<k); ++mask){
+		ll lcm = 0;
+		int cnt = 0;
+		for(int i=0; i<k; ++i){
+			if(mask & (1<<i)){
+				lcm = calcLCM(lcm, set[i]);
+				++cnt;
+			}
+		}
+		if(cnt%2) res += n/lcm;
+		else res -= n/lcm;
+	}
+	int ans = n-(int)res;
+	return ans;
+}
+```
+## Distribute Items
+Find the total number of ways to distribute N items among three people such that :
+Each person gets at least one item.
+
+Exactly one person among all the three people gets the maximum number of items.
+```cpp
+
+long countWays(int n)
+{
+    long ans=((long)(n-1)*(n-2))/2;
+    if(n%3==0) --ans;
+    long two= ((n-1)/2 -(n/3));
+    ans -= (two*3);
+    return ans;
+}
+
+// long countWays(int n)
+// {
+//     long ans = ((long)(n - 1) * (n - 2)) / 2;
+
+//     //Subtract total number of ways when all 3 people get same number of items
+//     if (n % 3 == 0)
+//     {
+//         ans--;
+//     }
+
+//     // Now, subtract total number of ways when two persons get same number of items and that too greater than third person.
+//     // This distribution is possible when two person get x number of items and third one will get y number of items i.e. 2x + y = N
+//     // y > 0 so, min value of y = 1, max value of x can be (N - 1) / 2
+//     // also for invalid way y < x, as y = N - 2x so, n - 2x < x => x > N / 3
+//     // thus total number of possible such x are (N - 1) / 2 - (N / 3)
+//     int waysTwoEquals = ((n - 1) / 2) - (n / 3);
+
+//     ans -= (waysTwoEquals * 3);
+
+//     return ans;
+// }
+```
+
+## Ninja on Adventure
+Ninja and his Granny decide to visit the nearby forest. The forest they visit is a very peculiar one. It is filled with Binary Search Trees.
+To avoid boredom, Granny decides to play a game with Ninja. She gives him an integer N, denoting the number of different key nodes in a binary search tree. His task is to find the number of binary search trees that can be formed with N different key nodes. Can you help him out.
+```cpp
+#include<bits/stdc++.h>
+using namespace std;
+
+#define ll long long
+const int mxA = 1e6;
+const int M = 1e9+7;
+
+ll iv[mxA+1], f1[mxA+1], f2[mxA+1];
+
+int main(){
+    int t; cin>>t;
+
+    iv[1]=1;
+    for(int i=2; i<=mxA; ++i)
+        iv[i] = M-M/i*iv[M%i]%M;
+    f1[0]=f2[0]=1;
+    for(int i=1; i<=mxA; ++i){
+        f1[i]= i*f1[i-1]%M;
+        f2[i]=f2[i-1]*iv[i]%M;
+    }
+
+    while(t--){
+        int n; cin>>n;
+        int n2 = n*2;
+        ll ans = f1[n2] * f2[n]%M * f2[n]%M * iv[n+1]%M;
+        cout << ans <<'\n';
+    }
+    return 0;
+}
+```
