@@ -38,7 +38,7 @@ string cycleDetection (vector<vector<int>>& e, int n, int m)
 
 ## CF Roads not only in Berlin
 
-``cpp
+```cpp
 #include<bits/stdc++.h>
 
 using namespace std;
@@ -124,6 +124,7 @@ int main(){
 ```
 
 ## Spoj KOICOST
+
 ```cpp
 #include<bits/stdc++.h>
 
