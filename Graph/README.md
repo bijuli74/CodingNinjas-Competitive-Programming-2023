@@ -1374,7 +1374,7 @@ int main() {
 }
 ```
 
-## Fill the Matrix
+## Fill the Matrix $$
 A matrix B (consisting of integers) of dimension N × N is said to be good if there exists an array A (consisting of integers) such that B[i][j] = |A[i] - A[j]|, where |x| denotes absolute value of integer x.
 You are given a partially filled matrix B of dimension N × N. Q of the entries of this matrix are filled by either 0 or 1. You have to identify whether it is possible to fill the remaining entries of matrix B (the entries can be filled by any integer, not necessarily by 0 or 1) such that the resulting fully filled matrix B is good.
 ```cpp
@@ -1546,4 +1546,93 @@ int main(){
 //     }
 //     return 0;
 // }
+```
+## Minimum Travel Cost
+Ninjaland is a country having 'N' states numbered from 1 to 'N'. These 'N' states are connected by 'M' bidirectional roads. Each road connects to different states and has some cost to travel from one state to another. Now, the chief wants you to select 'N' - 1 roads in such a way that the tourist bus can travel to every state at least once at minimum 'COST'.
+```cpp
+// I DSU MST Kosaraju
+#include <bits/stdc++.h>
+using namespace std;
+
+struct dsu {
+  vector<int> p, sz;
+  int size;
+  void init(int n) {
+    size = n;
+    p.resize(n + 1);
+    sz.resize(n + 1);
+    for (int i = 0; i < n; ++i) {
+      p[i] = i;
+      sz[i] = 1;
+    }
+  }
+  int find(int x) { return x ^ p[x] ? p[x] = find(p[x]) : x; }
+  void join(int x, int y) {
+    if ((x = find(x)) == (y = find(y)))
+      return;
+    if (sz[x] < sz[y]) {
+      p[x] = y;
+      sz[y] += sz[x];
+    } else {
+      p[y] = x;
+      sz[x] += sz[y];
+    }
+  }
+};
+
+vector<vector<int>> findMST(vector<vector<int>> &edges, int n, int m)
+{
+  vector<vector<int>> ans;
+  sort(edges.begin(), edges.end(), [](const vector<int>& x, const vector<int>& y){ return x[2] < y[2]; });
+  dsu ds;
+  ds.init(n);
+  for(auto e: edges){
+      int w = e[2], u = e[0], v=e[1];
+      if(ds.find(u)==ds.find(v)) 
+        continue;
+    
+    ans.push_back(e);
+    ds.join(u, v);
+  }
+  return ans;
+}
+```
+
+## Min Efforts Required
+The Ultimate Ninja Ankush, after training hard, goes for a good meal at the ninja cafe, for that he follows the path given on the map, which may or may not lead him to the ninja cafe. The map is a directed graph. Since he is also very lazy, he wants to minimize the effort to travel. The effort is defined as the product of all the distance it takes to reach from the dojo (source) to the ninja cafe (destination). Can you help him find the path with the minimum effort it would take The Ultimate Ninja Ankush to reach the destination?
+More Formally, you are given a directed graph with ‘N’ nodes and ‘M’ edges where the distance of each edge is greater than 0, also given a source ‘src’ and a destination ‘dest’. The task is to find the minimum product of edges from src’ to ‘dest’. If there is no path from ‘src’ to ‘dest’, then return -1.
+For example
+Given:
+‘N’ = 3, ‘M’ = 3. 
+‘edges’ = 
+    [[0 1 1],
+     [1 2 1],
+     [0 2 3]]
+‘src’ = 0, ‘dest’ = 2.
+
+There are two possible paths, that is to go from node-0 to node-2 directly, which will take 2 units of effort, or go from node-0 to node-1 and then node-1 to node-2, which will take 1 unit of effort.
+
+```cpp
+ll minEffortsRequired(vector<pair<pair<int, int>, ll>>&edges, int n, int src, int des)
+{
+	if (src == des) return 0;
+	
+	vector<ll> d(n + 1, 1e18);
+	int m = edges.size();
+
+	d[src] = 1;
+	//relaxing edges N-1 times
+	for (int i = 1; i <= n; i++)
+	{
+		for (int j = 0; j < m ; j++)
+		{
+			int u = edges[j].first.first;
+			int v = edges[j].first.second;
+			ll w = edges[j].second;
+			d[v] = min(d[v], d[u] * w);
+		}
+	}
+	
+	return d[des]>=1e18 ? -1 : d[des];
+}
 ```
