@@ -815,6 +815,735 @@ int minSteps(pair<int, int> st, pair<int, int> ed, int n) {
     return -1;
 }
 ```
+## Kruskal's Algorithm
+Given an undirected, connected and weighted graph G(V, E) with V number of vertices (which are numbered from 0 to V-1) and E number of edges.
+Find and print the total weight of Minimum Spanning Tree (MST) using Kruskal's algorithm.
+```cpp
+#include <bits/stdc++.h>
+using namespace std;
+#define ll                long long
+#define pb                push_back
+#define ppb               pop_back
+#define pf                push_front
+#define ppf               pop_front
+#define all(x)            (x).begin(),(x).end()
+#define uniq(v)           (v).erase(unique(all(v)),(v).end())
+#define sz(x)             (int)((x).size())
+#define ff                first
+#define ss                second
+#define ii                pair<int,int>
+#define mp                make_pair
+#define rep(i,a,b)        for(int i=a;i<b;i++)
+#define mem1(a)           memset(a,-1,sizeof(a))
+#define mem0(a)           memset(a,0,sizeof(a))
+#define ppc               __builtin_popcount
+#define ppcll             __builtin_popcountll
+#define fast_io          ios::sync_with_stdio(0); cin.tie(0);
+#define nl                 '\n'
+#define vt                vector
+#define vi                vector<int>
+#define ar                array
+
+//I DSU MST Kosaraju
+struct dsu{
+	vi p, sz;
+	ll size;
+	void init(ll n){
+		size=n;
+		p.resize(n+1); sz.resize(n+1);
+		for(ll i=0; i<n; ++i){
+			p[i]=i;
+			sz[i]=1;
+		}
+	}
+	ll find (ll x){
+		return x^p[x]?p[x]=find(p[x]):x;
+	}
+	void join(ll x, ll y){
+		if((x=find(x)) == (y=find(y)))
+			return;
+		if(sz[x]<sz[y]){
+			p[x]=y;
+			sz[y]+=sz[x];
+		} else{
+			p[y]=x;
+			sz[x]+=sz[y];
+		}
+	}
+};
+
+void solve(){
+	ll n, m; 
+	cin>>n>>m;
+	
+	vector<pair<ll, ii>> edges;
+	
+	for(ll i=0; i<m; ++i){
+		ll u, v, w;
+		cin>>u>>v>>w;
+		edges.pb({w, {u, v}});
+	}
+	sort(edges.begin(), edges.end());
+	ll ans=0;
+	dsu ds;
+	ds.init(n);
+	for(auto e: edges){
+		ll w=e.ff; ll u=e.ss.ff; ll v=e.ss.ss;
+		if(ds.find(u)==ds.find(v))
+			continue;
+		ans+=w;
+		ds.join(u, v);
+	}
+	cout<<ans<<nl;
+
+}
+
+int main(){
+    fast_io
+    int t; cin>>t;
+    while(t--){
+        solve();
+    }
+    return 0;
+}
+```
+
+## Prim's Algorithm
+Given an undirected, connected and weighted graph G(V, E) with V number of vertices (which are numbered from 0 to V-1) and E number of edges.
+Find and print the total weight of Minimum Spanning Tree (MST) using Prim's algorithm.
+```cpp
+#include <bits/stdc++.h>
+using namespace std;
+#define ll long long
+#define pb push_back
+#define ppb pop_back
+#define pf push_front
+#define ppf pop_front
+#define all(x) (x).begin(), (x).end()
+#define uniq(v) (v).erase(unique(all(v)), (v).end())
+#define sz(x) (int)((x).size())
+#define ff first
+#define ss second
+#define ii pair<int, int>
+#define mp make_pair
+#define rep(i, a, b) for (int i = a; i < b; i++)
+#define mem1(a) memset(a, -1, sizeof(a))
+#define mem0(a) memset(a, 0, sizeof(a))
+#define ppc __builtin_popcount
+#define ppcll __builtin_popcountll
+#define fast_io                                                                \
+  ios::sync_with_stdio(0);                                                     \
+  cin.tie(0);
+#define nl '\n'
+#define vt vector
+#define vi vector<int>
+#define ar array
+
+// I DSU MST Kosaraju
+struct dsu {
+  vi p, sz;
+  ll size;
+  void init(ll n) {
+    size = n;
+    p.resize(n + 1);
+    sz.resize(n + 1);
+    for (ll i = 0; i < n; ++i) {
+      p[i] = i;
+      sz[i] = 1;
+    }
+  }
+  ll find(ll x) { return x ^ p[x] ? p[x] = find(p[x]) : x; }
+  void join(ll x, ll y) {
+    if ((x = find(x)) == (y = find(y)))
+      return;
+    if (sz[x] < sz[y]) {
+      p[x] = y;
+      sz[y] += sz[x];
+    } else {
+      p[y] = x;
+      sz[x] += sz[y];
+    }
+  }
+};
+
+void solve() {
+  ll n, m;
+  cin >> n >> m;
+
+  vector<pair<ll, ii>> edges;
+
+  for (ll i = 0; i < m; ++i) {
+    ll u, v, w;
+    cin >> u >> v >> w;
+    edges.pb({w, {u, v}});
+  }
+  sort(edges.begin(), edges.end());
+  ll ans = 0;
+  dsu ds;
+  ds.init(n);
+  for (auto e : edges) {
+    ll w = e.ff;
+    ll u = e.ss.ff;
+    ll v = e.ss.ss;
+    if (ds.find(u) == ds.find(v))
+      continue;
+    ans += w;
+    ds.join(u, v);
+  }
+  cout << ans << nl;
+}
+
+int main() {
+  fast_io int t;
+  cin >> t;
+  while (t--) {
+    solve();
+  }
+  return 0;
+}
+```
+## Dijkstra's Algorithm
+Given an undirected, connected and weighted graph G(V, E) with V number of vertices (which are numbered from 0 to V-1) and E number of edges.
+Find and print the shortest distance from the source vertex (i.e. Vertex 0) to all other vertices (including source vertex also) using Dijkstra's Algorithm.
+Print the ith vertex number and the distance from source in one line separated by space. Print different vertices in different lines.
+Note : Order of vertices in output doesn't matter.
+```cpp
+#include <bits/stdc++.h>
+using namespace std;
+
+#define ll long long
+#define pb push_back
+#define ar array
+#define vi vector<int>
+#define fast_io                                                                \
+  ios::sync_with_stdio(0);                                                     \
+  cin.tie(0);
+#define nl '\n'
+
+const int mxN = 1e3 + 5, mxM = 1e3 + 5;
+int n, m;
+vector<ar<ll, 2>> adj[mxN];
+ll d[mxN];
+bool vis[mxN];
+// Djikstra
+void djikstra(int bi) {
+  priority_queue<ar<ll, 2>, vector<ar<ll, 2>>, greater<ar<ll, 2>>> pq;
+
+  for (int i = 0; i < n; ++i) {
+    d[i] = 1e18;
+    vis[i] = 0;
+  }
+//   memset(d, 0x3f, sizeof(d));
+//   memset(vis, 0, sizeof(vis));
+  pq.push({0, bi});
+  d[bi] = 0;
+  while (pq.size()) {
+    ar<ll, 2> u = pq.top();
+    pq.pop();
+
+    // if(u[0]>d[u[1]])
+    // continue;
+    if (vis[u[1]])
+      continue;
+    vis[u[1]] = 1;
+
+    for (ar<ll, 2> v : adj[u[1]]) {
+      if (d[v[1]] > u[0] + v[0]) {
+        d[v[1]] = u[0] + v[0];
+        pq.push({d[v[1]], v[1]});
+      }
+    }
+  }
+}
+
+void solve() {
+  cin >> n >> m;
+
+  for(int i=0; i<mxN; ++i)
+    adj[i].clear();
+
+  for (int i = 0; i < m; ++i) {
+    int a, b, c;
+    cin >> a >> b >> c;
+    adj[a].pb({c, b});
+    adj[b].pb({c, a});
+  }
+  
+  djikstra(0);
+  for(int i=0; i<n; ++i)
+    cout<< i << " " << d[i] <<'\n';
+
+}
+
+int main(){
+      fast_io 
+      int t; cin>>t;
+
+      while(t--){
+          solve();
+      }
+      return 0;
+}
+```
+
+## Bellman-Ford Algorithm
+you are given a weighted directed graph G with n vertices and m edges, and two specified vertex src and des. You want to find the length of shortest paths from vertex src to des. The graph may contain the edges with negative weight.
+```cpp
+#include <bits/stdc++.h>
+using namespace std;
+#define ll long long
+#define pb push_back
+#define ppb pop_back
+#define pf push_front
+#define ppf pop_front
+#define all(x) (x).begin(), (x).end()
+#define uniq(v) (v).erase(unique(all(v)), (v).end())
+#define sz(x) (int)((x).size())
+#define ff first
+#define ss second
+#define ii pair<int, int>
+#define mp make_pair
+#define rep(i, a, b) for (int i = a; i < b; i++)
+#define mem1(a) memset(a, -1, sizeof(a))
+#define mem0(a) memset(a, 0, sizeof(a))
+#define ppc __builtin_popcount
+#define ppcll __builtin_popcountll
+#define fast_io                                                                \
+  ios::sync_with_stdio(0);                                                     \
+  cin.tie(0);
+#define nl '\n'
+#define vt vector
+#define vi vector<int>
+#define ar array
+
+const int mxN = 205, mxM = 805;
+const int INF = 1e9;
+
+struct edge {
+  int a, b, cost;
+};
+
+int n, m, src;
+vector<edge> e(mxM);
+vt<int> d(mxN, INF);
+
+void solve() {
+  int n, m, src, des;
+  cin >> n >> m;
+  cin>> src >> des, --src, --des;
+
+  for (int i = 0; i <m; i++){
+    cin>>e[i].a >> e[i].b >> e[i].cost, --e[i].a, --e[i].b;
+  }
+
+  d[src] = 0;
+  for (;;) {
+    bool any = false;
+
+    for (int j = 0; j < m; ++j)
+      if (d[e[j].a] < INF)
+        if (d[e[j].b] > d[e[j].a] + e[j].cost) {
+          d[e[j].b] = d[e[j].a] + e[j].cost;
+          any = true;
+        }
+
+    if (!any)
+      break;
+  }
+  
+  cout << d[des] << nl;
+}
+
+int main(){
+    fast_io
+    int t; cin>>t;
+    while(t--){
+        e.clear();
+        d.clear();
+        d.assign(mxN, INF);
+
+        solve();
+    }
+}
+```
+
+## Floyd-Warshall Algorithm
+You are given an undirected weighted graph G with n vertices. And Q queries, each query consists of two integers a and b and you have print the distance of shortest path between a and b.
+Note: If there is no path between a and b print 10^9
+```cpp
+#include<bits/stdc++.h>
+using namespace std;
+
+#define fast_io                                                                \
+  ios::sync_with_stdio(0);                                                     \
+  cin.tie(0);
+
+const int mxN = 100;
+int n, m, q;
+int d[mxN][mxN];
+
+void solve(){
+    cin>>n>>m;
+    memset(d, 0x3f, sizeof(d));
+    for (int i = 0; i < m; ++i) {
+      int a, b, c;
+      cin >> a >> b >> c, --a, --b;
+      d[a][b] = min(d[a][b], c);
+      d[b][a] = min(d[b][a], c);
+    }
+
+    for(int i=0; i<n; ++i)
+        d[i][i]=0;
+    
+    for(int k=0; k<n; ++k)
+        for(int i=0; i<n; ++i)
+            for(int j=0; j<n; ++j)
+                d[i][j] = min(d[i][j], d[i][k]+d[k][j]);
+    
+    int q; cin>>q;
+    while(q--){
+        int a, b;
+        cin>>a>>b, --a, --b;
+        // cout << (d[a][b] >= 1e9 ? 1e9 : d[a][b]) << '\n';
+        cout << d[a][b] <<'\n';
+    }
+
+    
+}
+int main(){
+    
+    fast_io
+    int t; cin>>t;
+    while(t--){
+        solve();
+    }
+    return 0;
+}
+```
+
+## Permutation Swaps
+Kevin has a permutation P of N integers 1, 2, ..., N, but he doesn't like it. Kevin wants to get a permutation Q.
+He also believes that there are M good pairs of integers (ai, bi). Kevin can perform following operation with his permutation:
+Swap Px and Py only if (x, y) is a good pair.
+Help him and tell if Kevin can obtain permutation Q using such operations.
+
+```cpp
+#include <bits/stdc++.h>
+using namespace std;
+
+#define fast_io          ios::sync_with_stdio(0); cin.tie(0);
+struct dsu{
+    vector<int> p, sz;
+    int size;
+    void init(int n){
+        size=n;
+        p.resize(n+1); sz.resize(n+1);
+        for(int i=0; i<n; ++i){
+            p[i]=i;
+            sz[i]=1;
+        }
+    }
+    int find (int x){
+        return x^p[x]?p[x]=find(p[x]):x;
+    }
+    void join(int x, int y){
+        if((x=find(x)) == (y=find(y)))
+            return;
+        if(sz[x]<sz[y]){
+            p[x]=y;
+            sz[y]+=sz[x];
+        } else{
+            p[y]=x;
+            sz[x]+=sz[y];
+        }
+    }
+};
+
+void solve(){
+    int n, m; 
+    cin >> n >> m;
+    vector<int> p(n), q(n);
+    for(int i=0; i<n; ++i) cin>>p[i];
+    for(int i=0; i<n; ++i) cin>>q[i];
+
+    dsu ds;
+    ds.init(n);
+    
+    for(int i=0; i<m; ++i){
+        int a, b;
+        cin>>a>>b, --a, --b;
+        ds.join(p[a], p[b]); //a, b are index pos & not the actual nos
+    }
+    
+    for(int i=0; i<n; ++i){
+        if(p[i]!=q[i] && ds.find(p[i]) != ds.find(q[i])){
+            cout << "NO\n";
+            return;
+        }
+    }
+    cout << "YES\n";
+    return;
+}
+int main(){
+    fast_io
+    int t; cin>>t;
+    while(t--){
+        solve();
+    }
+}
+```
+
+## Monk and the Islands
+Monk visits the land of Islands. There are a total of N islands numbered from 1 to N. Some pairs of islands are connected to each other by Bidirectional bridges running over water.
+Monk hates to cross these bridges as they require a lot of efforts. He is standing at Island #1 and wants to reach the Island #N. Find the minimum the number of bridges that he shall have to cross, if he takes the optimal route.
+
+```cpp
+#include <bits/stdc++.h>
+using namespace std;
+
+#define pb push_back
+#define ar array
+#define vi vector<int>
+#define fast_io                                                                \
+  ios::sync_with_stdio(0);                                                     \
+  cin.tie(0);
+#define nl '\n'
+
+const int mxN = 1e4;
+int n, m;
+vector<ar<int, 2>> adj[mxN];
+int d[mxN];
+bool vis[mxN];
+// Djikstra
+void djikstra(int bi) {
+  priority_queue<ar<int, 2>, vector<ar<int, 2>>, greater<ar<int, 2>>> pq;
+
+  for (int i = 0; i < n; ++i) {
+    d[i] = 1e9;
+    vis[i] = 0;
+  }
+  //   memset(d, 0x3f, sizeof(d));
+  //   memset(vis, 0, sizeof(vis));
+  pq.push({0, bi});
+  d[bi] = 0;
+  while (pq.size()) {
+    ar<int, 2> u = pq.top();
+    pq.pop();
+
+    // if(u[0]>d[u[1]])
+    // continue;
+    if (vis[u[1]])
+      continue;
+    vis[u[1]] = 1;
+
+    for (ar<int, 2> v : adj[u[1]]) {
+      if (d[v[1]] > u[0] + v[0]) {
+        d[v[1]] = u[0] + v[0];
+        pq.push({d[v[1]], v[1]});
+      }
+    }
+  }
+}
+
+void solve() {
+  cin >> n >> m;
+  
+  for (int i = 0; i < m; ++i) {
+    int a, b, c;
+    cin >> a >> b, --a, --b;
+    adj[a].pb({1, b});
+    adj[b].pb({1, a});
+  }
+
+  djikstra(0);
+
+  cout << d[n-1] << '\n';
+}
+
+int main() {
+  fast_io int t;
+  cin >> t;
+
+  while (t--) {
+    for (int i = 0; i < mxN; ++i)
+      adj[i].clear();
+
+    solve();
+  }
+  return 0;
+}
+```
+
+## Fill the Matrix
+A matrix B (consisting of integers) of dimension N × N is said to be good if there exists an array A (consisting of integers) such that B[i][j] = |A[i] - A[j]|, where |x| denotes absolute value of integer x.
+You are given a partially filled matrix B of dimension N × N. Q of the entries of this matrix are filled by either 0 or 1. You have to identify whether it is possible to fill the remaining entries of matrix B (the entries can be filled by any integer, not necessarily by 0 or 1) such that the resulting fully filled matrix B is good.
+```cpp
+#include <bits/stdc++.h>
+using namespace std;
+
+#define fast_io          ios::sync_with_stdio(0); cin.tie(0);
+#define next next_  ///////////////////////
+
+const int mxN = 1e5;
+int node[mxN], next[mxN], to[mxN], w[mxN], e;
+
+void ins(int x, int y, int v){
+	e++;
+	next[e] = node[x];
+	node[x] = e;
+	to[e] = y;
+	w[e] = v;
+}
+
+int N, Q, ans;
+int vis[mxN], parity[mxN];
+void dfs(int x){
+	vis[x]=1;
+	for(int j=node[x]; j; j=next[j])
+		if(!vis[to[j]]){
+			parity[to[j]] = parity[x]^w[j];
+			dfs(to[j]);
+		}else if(parity[to[j]]^parity[x]^w[j])
+			ans = 0;
+}
+
+void clr(){
+	for(int i=0; i<N; ++i)
+		node[i]=vis[i]=parity[i]=0;
+	for(int i=0; i<e; ++i)
+		next[i]=to[i]=w[i]=0;
+	e=0;
+	ans=1;
+}
+
+void solve(){
+	int i, j, v;
+	cin>>N>>Q;
+	while(Q--){
+		cin>>i>>j>>v, --i, --j;
+		ins(i, j, v);
+		ins(j, i, v);
+	}
+	for(int i=0; i<N; ++i)
+		if(!vis[i])
+			dfs(i);
+	
+	cout << (ans ? "yes\n" : "no\n");
+}
+
+int main(){
+	fast_io
+	int t; cin>>t;
+	while(t--){
+		clr();
+		solve();
+	}
+	return 0;
+}
 
 
+// #include <bits/stdc++.h>
+// using namespace std;
+// #define ll                long long
+// #define pb                push_backl
+// #define fast_io          ios::sync_with_stdio(0); cin.tie(0);
+// #define vt                vector
+// #define vi                vector<int>
+// #define ar                array
 
+// const int mxN = 1e5;
+
+// struct dsu{
+// 	vi p, sz;
+// 	int size;
+// 	void init(int n){
+// 		size=n;
+// 		p.resize(n+1); sz.resize(n+1);
+// 		for(int i=0; i<n; ++i){
+// 			p[i]=i;
+// 			sz[i]=1;
+// 		}
+// 	}
+// 	int find (int x){
+// 		return x^p[x]?p[x]=find(p[x]):x;
+// 	}
+// 	void join(int x, int y){
+// 		if((x=find(x)) == (y=find(y)))
+// 			return;
+// 		if(sz[x]<sz[y]){
+// 			p[x]=y;
+// 			sz[y]+=sz[x];
+// 		} else{
+// 			p[y]=x;
+// 			sz[x]+=sz[y];
+// 		}
+// 	}
+// };
+
+// bool solve(){
+	
+//     int n, m; 
+//     cin>>n>>m;
+// 	dsu ds;
+// 	ds.init(n+1);
+
+//     vector<vector<int>> B(n+1, vector<int>(n+1, -1));
+//     // vector<ar<int, 3>> Q(m+1);
+//     vector<vector<int>> Q(m+1, vector<int>(3, 0));
+
+//     for(int i=0; i<m; ++i){
+//         int a, b, c;
+//         cin>>a>>b>>c;
+//         Q[i][0]=a; Q[i][1]=b; Q[i][2]=c;
+//     }
+//     bool ok = 1;
+	
+//     for(int q=0; q<m; ++q){
+//         int i, j, val;
+//         i=Q[q][0]; j=Q[q][1]; val=Q[q][2];
+        
+// 		if(i==j && val==1){
+// 			ok=0;
+// 			return ok;
+// 		}
+// 		if(B[i][j]!=-1){
+// 			if(val != B[i][j]){
+// 				ok=0;
+// 				return ok;
+// 			}
+// 		}else{
+// 			B[i][j] = val;
+//             B[j][i] = val;
+// 		}
+		
+// 		if(val==0){
+// 			ds.join(i, j);
+// 		}
+// 	}
+	
+// 	for(int q=0; q<m; ++q){
+//         int i, j, val;
+//         i=Q[q][0]; j=Q[q][1]; val=Q[q][2];
+        
+// 		if(val==1){
+// 			if(ds.find(i) == ds.find(j)){
+// 				ok=0;
+// 				return ok;
+// 			}
+// 		}
+// 	}
+// 	return ok;
+    
+// }
+
+// int main(){
+    
+//     fast_io
+//     int t; cin>>t;
+//     while(t--){
+//         bool ok = solve();
+//         cout << (ok ? "yes\n": "no\n") ;
+//     }
+//     return 0;
+// }
+```
