@@ -421,3 +421,161 @@ string matchingPrefix(int n, vector < string > s) {
    return ans;
 }
 ```
+## Longest Palindromic Substring
+You are given a string (STR) of length N.
+Your task is to find the longest palindromic substring. If there is more than one palindromic substring with the maximum length, return the one with the smaller start index.
+Note:
+A substring is a contiguous segment of a string.
+For example :
+The longest palindromic substring of "ababc" is "aba", since "aba" is a palindrome and it is the longest substring of length 3 which is a palindrome. There is another palindromic substring of length 3 is "bab". Since starting index of "aba" is less than "bab", so "aba" is the answer.
+```cpp
+#include <bits/stdc++.h>
+
+#define ar array
+
+string join(const string &s, char c) {
+  string joined;
+  for (int i = 0; i < s.length(); ++i) {
+    joined += s[i];
+    if (i != s.length() - 1)
+      joined += c;
+  }
+  return joined;
+}
+
+string longestPalinSubstring(string s){
+  // @ and $ signs are sentinels appended to each end to avoid bounds checking
+  const string &t = join('@' + s + '$', '#');
+  const int n = t.length();
+  // t[i - maxExtends[i]..i) ==
+  // t[i + 1..i + maxExtends[i]]
+  vector<int> maxExtends(n);
+  int center = 0;
+
+  for (int i = 1; i < n - 1; ++i) {
+    const int rightBoundary = center + maxExtends[center];
+    const int mirrorIndex = center - (i - center);
+    maxExtends[i] =
+        rightBoundary > i && min(rightBoundary - i, maxExtends[mirrorIndex]);
+
+    // Attempt to expand palindrome centered at i
+    while (t[i + 1 + maxExtends[i]] == t[i - 1 - maxExtends[i]])
+      ++maxExtends[i];
+
+    // If palindrome centered at i expand past rightBoundary,
+    // adjust center based on expanded palindrome.
+    if (i + maxExtends[i] > rightBoundary)
+      center = i;
+  }
+
+  // Find the maxExtend and bestCenter
+  int maxExtend = 0;
+  int bestCenter = -1;
+
+  for (int i = 0; i < n; ++i)
+    if (maxExtends[i] > maxExtend) {
+      maxExtend = maxExtends[i];
+      bestCenter = i;
+    }
+
+  const int l = (bestCenter - maxExtend) / 2;
+  const int r = (bestCenter + maxExtend) / 2;
+  return s.substr(l, r - l);
+}
+
+// const int mxN = 1e3;
+// int p[2 * mxN + 3];
+// char c[2 * mxN + 3];
+
+// string longestPalinSubstring(string s){
+    // int n = s.size();
+
+    // c[0] = '!';
+    // c[1] = '*';
+    // for (int i = 0; i < n; ++i) {
+    //   c[2 * i + 2] = s[i];
+    //   c[2 * i + 3] = '*';
+    // }
+
+    // c[2 * n + 2] = '@';
+    // int d = 0;
+    // for (int i = 1; i < 2 * n + 2; ++i) {
+    //   if (i <= d + p[d])
+    //     p[i] = min(p[2 * d - i], d + p[d] - i);
+    //   while (c[i - p[i]] == c[i + p[i]])
+    //     ++p[i];
+    //   --p[i];
+    //   if (i + p[i] > d + p[d])
+    //     d = i;
+    // }
+    // vector<ar<int, 2>> ans;
+
+    // for (int i = 1; i < 2 * n + 2; ++i)
+    //     ans.push_back({p[i], (i-p[i])/2});
+    // //   ans = max(ar<int, 2>{p[i], (i - p[i]) / 2}, ans);
+    // sort(ans.rbegin(), ans.rend());
+
+
+    // string res;
+    // for (int i = ans[0][1]; i < ans[0][1] + ans[0][0]; ++i)
+    //   res += s[i];
+    
+    // return res;
+// }
+
+// vector<int> manacher_odd(string s) {
+//   int n = s.size();
+//   s = "$" + s + "^";
+//   vector<int> p(n + 2);
+//   int l = 1, r = 1;
+//   for (int i = 1; i <= n; i++) {
+//     p[i] = max(0, min(r - i, p[l + (r - i)]));
+//     while (s[i - p[i]] == s[i + p[i]]) {
+//       p[i]++;
+//     }
+//     if (i + p[i] > r) {
+//       l = i - p[i], r = i + p[i];
+//     }
+//   }
+//   return vector<int>(begin(p) + 1, end(p) - 1);
+// // }
+
+// vector<int> manacher(string s) {
+//   string t;
+//   for (auto c : s) {
+//     t += string("#") + c;
+//   }
+//   auto res = manacher_odd(t + "#");
+//   return vector<int>(begin(res) + 1, end(res) - 1);
+// }
+
+// string longestPalinSubstring(string t){
+//     string s;
+//     for(int i=0; i<t.size(); ++i){
+//         s += "#";
+//         s += t[i];
+//     }
+//     s += "#";
+
+//     int n = s.size();
+//     vector<int> p(n);
+
+//     int c=0, r=0;
+//     for(int i=1; i<n-1; ++i){
+//         int other = 2*c-i;
+//         if(i<r) p[i] = min(p[other], r-i);
+//         while(s[i+p[i]+1] == s[i-p[i]-1] && i-p[i]-1>=1 && i+p[i]+1<n-1)
+//             p[i]++;
+//         if (i + p[i] > r) {
+//           c = i;
+//           r = i + p[i];
+//         }
+//     }
+
+//     int it = max_element(begin(p), end(p)) - p.begin();
+//     int len = p[it];
+//     int st = (it - len) / 2, ed = (it + len) / 2;
+
+//     return t.substr(st, ed - st);
+// }
+```
