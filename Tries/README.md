@@ -453,3 +453,225 @@ int main(){
     }
 }
 ```
+
+## Word Ladder
+You are given two strings BEGIN and END and an array of strings DICT. Your task is to find the length of the shortest transformation sequence from BEGIN to END such that in every transformation you can change exactly one alphabet and the word formed after each transformation must exist in DICT.
+Note:
+1. If there is no possible path to change BEGIN to END then just return -1.
+2. All the words have the same length and contain only lowercase english alphabets.
+3. The beginning word i.e. BEGIN will always be different from the end word i.e. END (BEGIN != END).
+
+```cpp
+#include <bits/stdc++.h>
+int wordLadder(string st, string ed, vector<string> &dict) 
+{
+	unordered_map<string, bool> mp;
+	for(int i=0; i<dict.size(); ++i) mp[dict[i]] = false;
+	if(!mp.count(ed)) return -1;
+	//bfs
+	int ans = 1;
+	queue<string> q;
+	q.push(st);
+	while(q.size()){
+		int m = q.size();
+		for(int i=0; i<m; i++){
+			string s = q.front();
+			q.pop();
+			if(s==ed) return ans;
+			string cur = s;
+			for(int j=0; j<s.size(); ++j){
+				for(int k=0; k<26; ++k){
+					cur[j] = 'a'+k;
+					if(mp.count(cur) && !mp[cur]){
+						mp[cur] = true;
+						q.push(cur);
+					}
+					cur = s;
+				}
+			}
+		}
+		ans++;
+	}
+	return -1;
+}
+```
+
+## Sub - XOR
+Given an array of positive integers, you have to print the number of subarrays whose XOR is less than K. Subarrays are defined as a sequence of continuous elements Ai, Ai + 1, ..., Aj. XOR of a subarray is defined as Ai ^ Ai + 1 ^ ... ^ Aj. Symbol ^ is Exclusive Or.
+```cpp
+#include<bits/stdc++.h>
+using namespace std;
+class trienode {
+public:
+  int left_count, right_count;
+  trienode *left;
+  trienode *right;
+  trienode() {
+    left_count = 0;
+    right_count = 0;
+
+    // Left denotes 0
+    left = NULL;
+
+    // Right denotes 1
+    right = NULL;
+  }
+};
+void insert(trienode *root, int element) {
+  for (int i = 31; i >= 0; i--) {
+    int x = (element >> i) & 1;
+
+    // If the current bit is 1
+    if (x) {
+      root->right_count++;
+      if (root->right == NULL)
+        root->right = new trienode();
+      root = root->right;
+    } else {
+      root->left_count++;
+      if (root->left == NULL)
+        root->left = new trienode();
+      root = root->left;
+    }
+  }
+}
+int query(trienode *root, int element, int k) {
+  if (root == NULL)
+    return 0;
+  int res = 0;
+  for (int i = 31; i >= 0; i--) {
+    bool current_bit_of_k = (k >> i) & 1;
+    bool current_bit_of_element = (element >> i) & 1;
+
+    // If the current bit of k is 1
+    if (current_bit_of_k) {
+      // If current bit of element is 1
+      if (current_bit_of_element) {
+        res += root->right_count;
+        if (root->left == NULL)
+          return res;
+        root = root->left;
+      }
+
+      // If current bit of element is 0
+      else {
+        res += root->left_count;
+        if (root->right == NULL)
+          return res;
+        root = root->right;
+      }
+    }
+
+    // If the current bit of k is zero
+    else {
+      // If current bit of element is 1
+      if (current_bit_of_element) {
+        if (root->right == NULL)
+          return res;
+        root = root->right;
+      }
+
+      // If current bit of element is 0
+      else {
+        if (root->left == NULL)
+          return res;
+        root = root->left;
+      }
+    }
+  }
+  return res;
+}
+
+int main(){
+
+  
+  int n, k; cin>>n>>k;
+  int arr[n];
+  for(int i=0; i<n; ++i) cin>>arr[i];
+
+  // Below three variables are used for storing
+  // current XOR
+  int temp, temp1, temp2 = 0;
+  trienode *root = new trienode();
+  insert(root, 0);
+  long long total = 0;
+  for (int i = 0; i < n; i++) {
+    temp = arr[i];
+    temp1 = temp2 ^ temp;
+    total += query(root, temp1, k);
+    insert(root, temp1);
+    temp2 = temp1;
+  }
+
+  cout << total << endl;
+
+  return 0;
+}
+```
+## Count Distinct Substrings
+Given a string 'S', you are supposed to return the number of distinct substrings(including empty substring) of the given string. You should implement the program using a trie.
+Note :
+A string ‘B’ is a substring of a string ‘A’ if ‘B’ that can be obtained by deletion of, several characters(possibly none) from the start of ‘A’ and several characters(possibly none) from the end of ‘A’. 
+
+Two strings ‘X’ and ‘Y’ are considered different if there is at least one index ‘i’  such that the character of ‘X’ at index ‘i’ is different from the character of ‘Y’ at index ‘i’(X[i]!=Y[i]).
+```cpp
+struct Node{
+    Node *links[26];
+    
+    bool containsKey(char ch){
+        return (links[ch-'a'] != NULL);
+    }
+    Node* get(char ch){
+        return links[ch-'a'];
+    }
+    void insert(char ch, Node* node){
+        links[ch-'a'] = node;
+    }
+};
+
+int countDistinctSubstrings(string &s)
+{
+    Node *root = new Node();
+    int cnt = 0;
+    for(int i=0; i<s.size(); ++i){
+        Node *node = root;
+        for(int j=i; j<s.size(); ++j){
+            if(!node->containsKey(s[j])){
+                cnt++;
+                node->insert(s[j], new Node());
+            }
+            node = node->get(s[j]);
+        }
+    }
+    return cnt+1;
+}
+```
+
+## Unique Matrix
+You are given a binary matrix 'MATRIX' of 'N' rows and 'M' columns.
+Your task is to return all the unique rows in the order they appear in the matrix.
+For example:
+Matrix = [ [1,0,1], [0,0,1 ], [1,0,1 ]] 
+Result = [ [1,0,1], [0,0,1] ]. 
+The row [1,0,1] is before [0,0,1] as it appears before in matrix.
+Note: In the binary matrix, all the entries are either 0 or 1.
+```cpp
+#include <bits/stdc++.h>
+vector<vector<int>> uniqueRow(vector<vector<int>> &g, int n, int m)
+{
+      vector<vector<int>> ans;
+
+      unordered_map<string, int> mp;
+      for(int i=0; i<n; ++i){
+            string s;
+            for(int j=0; j<m; ++j){
+                  s += to_string(g[i][j]);
+            }
+            if (!mp.count(s)) {
+              mp[s] = 1;
+              ans.push_back(g[i]);
+            }
+      }
+      return ans;
+}
+```
