@@ -135,3 +135,321 @@ int main() {
 	return 0;
 }
 ```
+## Maximum XOR
+You are given two arrays of non-negative integers say ‘arr1’ and ‘arr2’. Your task is to find the maximum value of ( ‘A’ xor ‘B’ ) where ‘A’ and ‘B’ are any elements from ‘arr1’ and ‘arr2’ respectively and ‘xor’ represents the bitwise xor operation.
+```cpp
+typedef struct Node{
+    Node *next[2];
+
+    Node(){
+        for(int i=0; i<2; ++i) next[i]=NULL;
+    }
+} Node;
+
+void insert(Node *cur, int x, int i){
+    if(i<0) return;
+    if((x & (1<<i)) > 0){
+        if(cur->next[1] == NULL)
+            cur->next[1] = new Node();
+        insert(cur->next[1], x, i-1);
+    }else{
+        if(cur->next[0] == NULL)
+            cur->next[0] = new Node();
+        insert(cur->next[0], x, i-1);
+    }
+}
+
+int search(Node *cur, int x, int i){
+    if(i<0) return 0;
+    if((x & (1<<i)) > 0){
+        if(cur->next[0] != NULL)
+            return ((1<<i) + search(cur->next[0], x, i-1));
+        else
+            return search(cur->next[1], x, i-1);
+    }else{
+        if(cur->next[1] != NULL)
+            return ((1<<i) + search(cur->next[1], x, i-1));
+        else
+            return search(cur->next[0], x, i-1);
+    }
+}
+int maxXOR(int n, int m, vector<int> &a1, vector<int> &a2) 
+{
+    Node *root = new Node();
+    int M = 30;
+    int ans = 0;
+
+    for(int i=0; i<n; ++i)
+        insert(root, a1[i], M);
+    
+    for(int i=0; i<m; ++i)
+         ans = max(ans, search(root, a2[i], M));
+    
+    return ans;
+}
+```
+
+## CF Vasily's multiset
+
+```cpp
+#include<bits/stdc++.h>
+#define int long long
+
+using namespace std;
+
+typedef struct Node {
+	Node *left, *right;
+	int cnt;
+
+	Node() {
+		left = right = NULL;
+		cnt = 0;
+	}
+}Node;
+
+void insert(Node *curr, int x, int i) {
+	curr->cnt += 1;
+	if(i == -1) return;
+
+	if((x&(1ll<<i)) > 0) {
+		if(curr->right == NULL) {
+			curr->right = new Node();
+		}
+		insert(curr->right, x, i-1);
+	} else {
+		if(curr->left == NULL) {
+			curr->left = new Node();
+		}
+		insert(curr->left, x, i-1);
+	}
+}
+
+Node *remove(Node *curr, int x, int i) {
+	curr->cnt -= 1;
+	if(curr->cnt == 0) return NULL;
+	if(i == -1) return curr;
+	if((x&(1ll<<i)) > 0) {
+		curr->right = remove(curr->right, x, i-1);
+	} else{
+		curr->left = remove(curr->left, x, i-1);
+	}
+	return curr;
+}
+
+int search(Node *curr, int x, int i) {
+	if(i == -1) return 0;
+	if((x&(1ll<<i)) > 0) {
+		if(curr->left != NULL) {
+			return ((1ll<<i) + search(curr->left, x, i-1));
+		}
+		return search(curr->right, x, i-1);
+	} else{
+		if(curr->right != NULL) {
+			return ((1ll<<i) + search(curr->right, x, i-1)); 
+		}
+		return search(curr->left, x, i-1);
+	}
+}
+
+signed main() {
+	freopen("input.txt", "r", stdin);
+	freopen("out.txt", "w", stdout);
+	Node * root = new Node();
+	int M = 31;
+	insert(root, 0, M);
+	int q;
+	cin>>q;
+	while(q--) {
+		string type;
+		int x;
+		cin>>type>>x;
+
+		if(type == "+") {
+			insert(root, x, M);
+		} else if(type == "-") {
+			root = remove(root, x, M);
+		} else {
+			cout<<search(root, x, M)<<"\n";
+		}
+	}
+	return 0;
+}
+```
+
+## Spell Checker
+You are given a list of strings, ‘DICTIONARY[]’ that represents the correct spelling of words and a query string ‘QUERY’ that may have incorrect spelling. You have to check whether the spelling of the string ‘QUERY’ is correct or not. If not, then return the list of suggestions from the list ‘DICTIONARY’. Otherwise, return an empty list which will be internally interpreted as the correct string.
+Note:
+1) The suggested correct strings for the string  ‘QUERY’ will be all those strings present in the ‘DICTIONARY[]’ that have the prefix same as the longest prefix of string ‘QUERY’.
+
+2) The ‘DICTIONARY[]’ contains only distinct strings.
+
+```cpp
+typedef struct Node{
+    Node *next[26];
+    bool isEnd;
+
+    Node() {
+      for (int i = 0; i < 26; ++i)
+        next[i] = NULL;
+      isEnd = false;
+    }
+
+} Node;
+
+void insert(Node* cur, string& s){
+    int i=0;
+    while(i<s.size()){
+        int index = s[i]-'a';
+        if(cur->next[index] == NULL)
+            cur->next[index] = new Node();
+        
+        cur = cur->next[index];
+        i++;
+    }
+
+    cur->isEnd = true;
+
+}
+
+void search(Node* cur, string res, vector<string>& ans){
+    if(cur->isEnd){
+        ans.push_back(res);
+        return;
+    }
+
+    for(int i=0; i<26; ++i){
+        if(cur->next[i] != NULL){
+            res.push_back(i+'a');
+            search(cur->next[i], res, ans);
+            res.pop_back();
+        }
+    }
+}
+vector<string> spellChecker(vector<string> &dict, string &query){
+    Node *root = new Node();
+    for(int i=0; i<dict.size(); ++i)
+        insert(root, dict[i]);
+    
+    vector<string> ans;
+    for(int i=0; i<query.size(); ++i){
+        int index = query[i]-'a';
+        if(root->next[index] == NULL){
+            string pf = query.substr(0, i);
+            search(root, pf, ans);
+            return ans;
+        }
+        root = root->next[index];
+    }
+
+    if(root->isEnd == true)
+        return ans;
+    
+    search(root, query, ans);
+    return ans;
+}
+```
+
+## Help Pradyumana!
+Send Feedback
+Pradyumn is tired of using auto - correct feature in his smartphone. He needs to correct his auto - correct more times than the auto - correct corrects him. Pradyumn is thinking to make his own app for mobile which will restrict auto - correct feature, instead it will provide auto - completion. Whenever Pradyumn types factorial, auto - correct changes it to fact. Pradyumn's App will show options such as fact, factorial, factory. Now, he can chose from any of these options. As Pradyumn is busy with his front - end work of his App. He asks you to help him. He said "You will be given set of words(words may repeat too but counted as one only). Now, as user starts the app, he will make queries(in lowercase letters only). So, you have to print all the words of dictionary which have the prefix same as given by user as input. And if no such words are available, add this word to your dictionary." As you know, Pradyumn want this app to be as smart as him :P So, implement a program for him such that he can release it on Fun Store.
+Input Format:
+Single integer N which denotes the size of words which are input as dictionary
+N lines of input, where each line is a string of consisting lowercase letter
+Single integer Q which denotes the number of queries.
+Q number of lines describing the query string on each line given by user
+```
+Constraints:
+1 ≤ N ≤ 30000
+sum(len(string[i])) ≤ 2∗10^5
+1 ≤ Q ≤ 10^3
+Output Format:
+If auto - completions exists, output all of them in lexicographical order else output "No suggestions" without quotes
+Sample Input 1:
+3
+fact
+factorial
+factory
+2
+fact
+pradyumn
+Sample Output 1:
+fact
+factorial
+factory
+```
+```cpp
+#include <bits/stdc++.h>
+using namespace std;
+
+typedef struct Node {
+  Node *next[26];
+  bool isLeaf;
+
+  Node() {
+    for (int i = 0; i < 26; ++i)
+      next[i] = NULL;
+    isLeaf = false;
+  }
+
+} Node;
+
+void insert(string s, Node* root){
+    if(s.size()==0){
+        root->isLeaf = true;
+        return;
+    }
+    Node* cur;
+    int idx = s[0]-'a';
+    if(root->next[idx] != NULL)
+        cur = root->next[idx];
+    else{
+        cur = new Node();
+        root->next[idx] = cur;
+        cur = root->next[idx];
+    }
+    insert(s.substr(1), cur);
+}
+
+void helper(Node* cur, string pf){
+    bool ok = true;
+    if(cur->isLeaf)
+        cout << pf << '\n';
+    
+    for(int i=0; i<26; ++i){
+        Node* tmp = cur;
+        if(tmp->next[i] != NULL){
+            char sf = (int)i + (int)'a';
+            helper(cur->next[i], pf+sf);
+        }
+    }
+}
+
+void printer(Node* root, string s){
+    Node* cur = root;
+    for(int i=0; i<s.size(); ++i){
+        int idx = s[i]-'a';
+        if(cur->next[idx] != NULL)
+            cur = cur->next[idx];
+        else{
+            cout << "No suggestions" <<'\n';
+            insert(s, root);
+            return;
+        }
+    }
+    helper(cur, s);
+}
+
+int main(){
+    int n; cin>>n;
+    Node* root = new Node();
+    for(int i=0; i<n; ++i){
+        string s; cin>>s;
+        insert(s, root);
+    }
+    int q; cin>>q;
+    for(int i=0; i<q; ++i){
+        string s; cin>>s;
+        printer(root, s);
+    }
+}
+```
