@@ -176,3 +176,107 @@ Your task is to help Little Ninja Deepu get back together with Ninja Kate.
 For example:
 Given ‘N’ = 2, ‘P’ = 11. 
 Then the answer will be 9. Because (6!) / (6 ^ 2) = 20, and 20 remainder 11 is 9. Therefore the answer is 9.
+
+## Cover The Points
+You are given ‘N’ points that you need to cover. To cover all the points from a point at ‘x’ to a point at ‘y’, the cost will be
+c + (x − y)^2, where c is a constant. 
+Given the points and the constant c, what is the minimum cost to cover all the points?
+For Example:
+If N=2 and C=3 and points are [1,2]. 
+
+If we follow path 1 → 2, the total cost incurred would be (3+(1−2)^2)=4. We can prove that this is the minimum cost incurred.
+
+Hence, the output will be 4.
+```cpp
+struct Line {
+  int m, b;
+
+  int eval(int x) { return m * x + b; }
+
+  void init(int i, vector<int> &x, vector<int> &dp) {
+    m = -int(2) * int(x[i - 1]);
+    b = int(x[i - 1]) * int(x[i - 1]) + dp[i];
+  }
+};
+
+double calcInter(const Line &a, const Line &b) {
+  double r = (b.b - a.b) / double(a.m - b.m);
+
+  return r;
+}
+
+int getMin(int x, int &sz, vector<double> &inters, vector<Line> &hull) {
+  int i = 0;
+
+  if (sz == 1) {
+    i = 0;
+  } else if (x < inters[sz - 2]) {
+    i = sz - 1;
+  } else {
+    int lo = 0, hi = sz - 2, mi;
+    while (lo < hi) {
+      mi = (lo + hi) >> 1;
+
+      if (inters[mi] > x) {
+        lo = mi + 1;
+      } else {
+        hi = mi;
+      }
+    }
+
+    i = lo;
+  }
+
+  return hull[i].eval(x);
+}
+
+int coverAllPoints(int n, int c, vector<int> &points) {
+  vector<int> dp(n);
+  vector<double> inters(n);
+
+  dp[n - 1] = c;
+  int sz = 0;
+
+  vector<Line> hull(n);
+
+  hull[sz++].init(n - 1, points, dp);
+
+  for (int i = n - 2; i >= 0; --i) {
+    dp[i] = c + (points[n - 1] - points[i]) * (points[n - 1] - points[i]);
+    dp[i] = min(dp[i], getMin(points[i], sz, inters, hull) +
+                           (points[i]) * (points[i]) + (c));
+
+    if (i) {
+      hull[sz++].init(i, points, dp);
+    }
+
+    if (sz - 2 >= 0) {
+      inters[sz - 2] = calcInter(hull[sz - 1], hull[sz - 2]);
+    }
+
+    while (sz > 2 && inters[sz - 2] > inters[sz - 3]) {
+      hull[sz - 2] = hull[sz - 1];
+      sz--;
+
+      if (sz - 2 >= 0) {
+        inters[sz - 2] = calcInter(hull[sz - 1], hull[sz - 2]);
+      }
+    }
+  }
+
+  return dp[0];
+}
+
+// This is an implementation of a solution to the "Minimum Time to Collect All Keys" problem, where you are given the number of keys, n, and the cost of traveling one unit, c, and a list of the points at which the keys are located. The goal is to find the minimum time to collect all the keys, given that you start at one point and have to visit all other points exactly once.
+
+// The solution uses dynamic programming, where dp[i] is an array that stores the minimum time to collect all keys starting from point i. The code uses a variant of the dynamic programming called "Convex Hull Optimization" to optimize the time complexity.
+
+// The Line struct represents a line in the 2D space, and it has two properties: m which represents the slope of the line, and b which represents the y-intercept of the line. The eval function evaluates the line at a given x, and the init function initializes the line by setting the slope and y-intercept based on the values of i, x, and dp.
+
+// The calcInter function calculates the intersection of two lines, a and b, and returns the x-coordinate of the intersection.
+
+// The getMin function finds the line in the "convex hull" (a set of lines) with the minimum value of dp[i] for a given x.
+
+// The coverAllPoints function implements the main logic of the solution. It starts by initializing dp[n-1] to c and creating the first line in the "convex hull". Then, it iterates over the remaining points in reverse order and calculates dp[i] as the minimum time to reach all keys starting from point i. The code uses the getMin function to find the line in the "convex hull" with the minimum value of dp[i] for a given x, and updates the "convex hull" as needed. Finally, it returns dp[0], which is the minimum time to reach all keys starting from the first point.
+```
+
