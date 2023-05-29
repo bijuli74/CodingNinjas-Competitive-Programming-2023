@@ -275,3 +275,29 @@ void findWinner(int * arr, int n ){
   // cout << (ok ? "First" : "Second") << '\n';
 }
 ```
+## Number Game $$
+Alice and Bob have invented a new game to play. The rules are as follows -
+First, they get a set of n distinct integers. And then they take turns to make the following moves. During each move, either Alice or Bob (the player whose turn is the current) can choose two distinct integers x and y from the set, such that the set doesn't contain their absolute difference |x - y|. Then this player adds integer |x - y| to the set (so, the size of the set increases by one).
+If the current player has no valid move, he (or she) loses the game. The question is who will finally win the game if both players play optimally. Remember that Alice always moves first.
+```cpp
+#include <bits/stdc++.h>
+
+char *gameWinner(int *a, int n) {
+    char* p1 = "Alice";
+    char* p2 = "Bob";
+
+    int gcd = a[0];
+    for(int i=1; i<n; ++i)
+        gcd = __gcd(gcd, a[i]);
+    
+    int mx=-1;
+
+    for(int i=0; i<n; ++i){
+        mx = max(mx, a[i]);
+    }
+    int remMoves = mx/gcd - n;
+
+    return (remMoves&1) ? p1 : p2;
+    
+}
+```
