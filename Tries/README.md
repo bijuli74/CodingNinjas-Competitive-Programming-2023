@@ -67,3 +67,71 @@ vector<int> searchEngine(vector<pair<string, int> > db, vector<string> t)
     
 }
 ```
+## Spoj ADAINDEX
+```cpp
+#include<bits/stdc++.h>
+
+using namespace std;
+
+
+typedef struct Node{
+	Node *next[26];
+	int cnt;
+
+	Node() {
+		for(int i=0; i<26; i++) next[i] = NULL;
+		cnt = 0;
+	}
+}Node;
+
+void insert(Node *curr, string &s, int index) {
+	if(s.length() == index) {
+		curr->cnt += 1;
+		return;
+	}
+	curr->cnt += 1;
+	int nextIndex = (int)(s[index] - 'a');
+	if(curr->next[nextIndex] == NULL) {
+		curr->next[nextIndex] = new Node();
+	}
+
+	insert(curr->next[nextIndex], s, index+1);
+
+}
+
+int search(Node *curr, string &s, int index) {
+	if(curr == NULL) return 0;
+	if(index == s.length()) {
+		return curr->cnt;
+	}
+
+	int nextIndex = (int)(s[index] - 'a');
+	return search(curr->next[nextIndex], s, index + 1);
+}
+
+
+int main() {
+	freopen("input.txt", "r", stdin);
+	freopen("out.txt", "w", stdout);
+	ios_base::sync_with_stdio(false);
+	cin.tie(0);
+	cout.tie(0);
+
+	int n, q;
+	cin>>n>>q;
+
+	Node *root = new Node();
+	for(int i=0; i<n; i++) {
+		string word;
+		cin>>word;
+		insert(root, word, 0);
+	}
+
+	while(q--) {
+		string s;
+		cin>>s;
+		cout<<search(root, s, 0)<<"\n";
+	}
+	return 0;
+}
+```
