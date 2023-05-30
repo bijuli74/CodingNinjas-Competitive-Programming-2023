@@ -675,3 +675,123 @@ vector<vector<int>> uniqueRow(vector<vector<int>> &g, int n, int m)
       return ans;
 }
 ```
+## Code Breaker
+Jack Ryan is one of the world’s most famous cryptographers. He has been recently tasked with breaking a code with which our country’s enemies are communicating. He has thought of a possible break in the code, using a very complex system of strings, which thankfully, you have nothing to do with. You are tasked with a little problem. Jack will give you n strings, labelled S1, S2, …. Sn, along with q queries.
+In each query, you have an integer X and a string CODE. You will take into consideration strings S1 to SX. Among these selected strings, consider all the strings such that their longest common prefix with CODE is the maximum possible. Now, from these strings, print the lexicographically smallest one. This would give Jack tremendous insight into further breaking the code. Can you help him?
+```cpp
+#include <bits/stdc++.h>
+using namespace std;
+
+struct query
+{
+	int range;
+	int index;
+	string query_str;
+};
+struct TrieNode
+{
+    struct TrieNode *children[26];
+    bool isEndOfWord;
+    int first;
+};
+struct TrieNode *getNode(void)
+{
+    struct TrieNode *pNode =  new TrieNode;
+ 
+    pNode->isEndOfWord = false;
+    
+    pNode->first = 26;
+ 
+    for (long int i = 0; i < 26; i++)
+        pNode->children[i] = NULL;
+ 
+    return pNode;
+}
+void insert(struct TrieNode *root, string key)
+{
+    struct TrieNode *pCrawl = root;
+ 
+    for (long int i = 0; i < key.length(); i++)
+    {
+       long int index = key[i] - 'a';
+        if (!pCrawl->children[index])
+            pCrawl->children[index] = getNode();
+            
+        if(index < pCrawl->first)
+        {
+            pCrawl->first = index;
+        }
+        pCrawl = pCrawl->children[index];
+    }
+    pCrawl->isEndOfWord = true;
+}
+string findLCP(struct TrieNode *root, string key)
+{
+	long int f = 0;
+	string lcp = "";
+    struct TrieNode *pCrawl = root;
+ 
+    for (long int i = 0; i < key.length(); i++)
+    {
+        long int index = key[i] - 'a';
+        if (pCrawl->children[index])
+        {
+        	pCrawl = pCrawl->children[index];
+        	lcp += key[i];
+        }
+        else
+        break;
+    }
+        
+	while(1)
+	{
+		if(pCrawl->isEndOfWord)
+			break;
+		
+		char ch='a'+ pCrawl->first;
+		lcp += ch;
+		pCrawl=pCrawl->children[pCrawl->first];
+	}
+	return lcp;
+}
+bool compareRange(struct query q1, struct query q2)
+{
+	return (q1.range < q2.range);
+}
+int main() 
+{
+
+	int q,r,n;
+	string s;
+	cin>>n;
+	string given_str[n];
+	for(int i=0;i<n;i++)
+	cin>>given_str[i];
+	cin>>q;
+	struct query queries[q];
+	string ans[q];
+	for(int i=0;i<q;i++)
+	{
+		cin>>r>>s;
+		queries[i].query_str = s;
+		queries[i].range = r;
+		queries[i].index = i;
+	}
+	sort(queries,queries+q,compareRange);
+	int j = 0;
+	struct TrieNode *root = getNode();
+	for(int i = 0; i < n; i++)
+    {  
+    	insert(root,given_str[i]);
+    	while(j<q && i==queries[j].range-1)
+    	{
+    		ans[queries[j].index] = findLCP(root,queries[j].query_str);
+    		j++;
+    	}
+    }
+    for(int i=0;i<q;i++)
+    cout<<ans[i]<<endl;
+	return 0;
+}
+```
+## 
