@@ -701,3 +701,144 @@ int countWays(int n, vector<vector<int>> &ids)
 	return ans;
 }
 ```
+## Edges In MST
+Your task is to determine the following for each edge of the given graph: whether it
+is either included in any MST, included at least in one MST, or not included in any
+MST.
+```cpp
+#include<bits/stdc++.h>
+using namespace std;
+
+const int N = 1e5;
+
+struct Edge{
+	int a , b , w;
+	int index;
+};
+
+//list of edges
+Edge edges[N+1];
+
+//for dsu
+int _par[N+1];
+
+//to store result
+int result[N+1];
+
+//for graph
+vector<pair<int,int> > adj[N+1];
+
+//for bridges
+int in[N+1] , low[N+1] , timer;
+bool vis[N+1];
+
+
+bool comp(Edge a , Edge b){
+	return a.w < b.w;
+}
+
+int find(int a){
+	if(_par[a] == a) return a;
+
+	return _par[a] = find(_par[a]);
+}
+
+void addEdge(int a , int b , int index){
+	a = find(a);
+	b = find(b);
+
+	if(a == b) return;
+
+	result[index] = 1;
+	adj[a].push_back({b , index});
+	adj[b].push_back({a , index});
+}
+
+void merge(int a , int b){
+	a = find(a);
+	b = find(b);
+
+	adj[a].clear();
+	adj[b].clear();
+
+	vis[a] = vis[b] = false;
+
+	//merge
+	if(a != b) _par[a] = b;
+}
+
+void dfs(int node , int edgeIndex){
+	in[node] = low[node] = timer++;
+	vis[node] = true;
+
+	for(pair<int,int> e : adj[node]){
+		int index = e.second;
+		int v = e.first;
+
+		if(index == edgeIndex) continue;
+
+		if(vis[v]){
+			low[node] = min(low[node] , in[v]);
+		}else{
+			dfs(v , index);
+			low[node] = min(low[node] , low[v]);
+		}
+	}
+
+	if(edgeIndex != 0){
+		if(in[node] == low[node]) result[edgeIndex] = 2;
+	}
+
+}
+
+int main(){
+
+	// #ifndef ONLINE_JUDGE
+	// freopen("input.txt" , "r" , stdin);
+	// freopen("output.txt" , "w" , stdout);
+	// #endif
+	
+	int n , m;
+
+	cin>>n>>m;
+
+	for(int i=1;i<=n;i++) _par[i] = i;
+
+	for(int i=1;i<=m;i++){
+		cin>>edges[i].a>>edges[i].b>>edges[i].w;
+		edges[i].index = i;
+	}
+	
+	sort(edges + 1 , edges + m + 1 , comp);
+
+	int i = 1;
+	while(i <= m){
+
+		int j;
+		//STEP 1
+		for(j=i; edges[i].w == edges[j].w ; j++) 
+			addEdge(edges[j].a , edges[j].b , edges[j].index);
+
+
+		//STEP 2 : find all bridges
+		timer = 0;
+		for(j=i; edges[i].w == edges[j].w ; j++) {
+			int node = find(edges[j].a);
+			if(vis[node] == false) dfs(node , 0);
+		}
+
+		//STEP 3 : merge and remove edges
+		for(j=i; edges[i].w == edges[j].w ; j++) merge(edges[j].a , edges[j].b);
+
+		i = j;
+
+	}
+
+	for(int i=1;i<=m;i++){
+		if(result[i] == 0) cout<<"none\n";
+		else
+		if(result[i] == 1) cout<<"at least one\n";
+		else			   cout<<"any\n";
+	}
+}
+````
