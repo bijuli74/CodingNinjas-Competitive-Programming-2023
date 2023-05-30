@@ -844,3 +844,223 @@ solve();
 }
 }
 ```
+## Count Special Palindromic Substrings
+You are given a string 'STR'. Your task is to count the number of special palindromic substrings of size greater than 1 that the given string contains. A substring is said to be a special palindrome in the following two cases:
+If all the characters in the substring are the same.
+
+If the length of the substring is odd and only the middle element is different, while all the other characters are the same. 
+Example:
+“aba” is a special palindrome, while “abaa” is not
+```cpp
+int specialPalindromes(string &s)
+{
+    int n = s.size();
+    int ans = 0;
+    int sameChar[n] = { 0 };
+
+    int i=0;
+    while(i<n){
+        int cnt = 1;
+        int j = i+1;
+        while(s[i]==s[j] && j<n)
+            cnt++, j++;
+        
+        ans += (cnt * (cnt+1)/2);
+        sameChar[i] = cnt;
+        i=j;
+    }
+
+    for(int j=1; j<n; ++j){
+        if(s[j] == s[j-1])
+            sameChar[j] = sameChar[j-1];
+        if(j>0 && j<(n-1) && (s[j-1]==s[j+1] && s[j]!=s[j-1]))
+            ans += min(sameChar[j-1], sameChar[j+1]);
+    }
+    ans -= n;
+    return ans;
+}
+```
+## Find all distinct palindromic substrings of a given string
+Ninja did not do homework. As a penalty, the teacher has given a string ‘S’ to ninja and asked him to print all distinct palindromic substrings of the given string. A string is said to be palindrome if the reverse of the string is the same as the string itself. For example, the string “bccb” is a palindrome, but the string “def” is not a palindrome.
+```cpp
+#include <bits/stdc++.h>
+
+bool isPalin(string s){
+    for(int i=0, j=s.size()-1; i<j; ++i, --j)
+        if(s[i]!=s[j]) return false;
+    return true;
+}
+vector<string> distinctPalindrome(string &s)
+{
+    int n = s.size();
+    set<string> st;
+    for(int i=0; i<n; ++i){
+        for(int d=1; d<=n; ++d){
+            string cur;
+            cur = s.substr(i, d);
+            if(isPalin(cur)) st.insert(cur);
+        }
+    }
+    vector<string> ans(st.begin(), st.end());
+    return ans;
+}
+```
+## Last Substring In Lexicographical Order
+You are given a string ‘Str’ of length ‘N’. Find the last substring of ‘Str’ in lexicographical order.
+In Lexicographical order string ‘S1’ comes before string ‘S2’ if S1 is the prefix of S2 and (|S1| < |S2|), or if none of them is a prefix of the other and at the first position where they differ, the character in ‘S1’ is smaller than the character in ‘S2’.
+Example :
+Consider string ‘Str’ = “abba”, then its substring in lexicographical order is [“a”, “ab”, “abb”, “abba”, “b”, “bb”, “bba”].  Clearly, the last substring in lexicographical order is  “bba”. 
+```cpp
+string findLastSubstring(string &s) {
+    int n = s.size();
+    string ans, cur_sf;
+    for(int i=n-1; ~i; --i){
+        cur_sf = s[i] + cur_sf;
+        if(cur_sf > ans)
+            ans = cur_sf;
+    }
+    return ans;
+}
+```
+## Longest Chunked Palindrome Decomposition
+You are given a string ‘S’. Your task is to find the length of it’s longest possible chunked palindrome. In other words, you have to split the string ‘S’ into ‘K’ substrings ((Sub)1, (Sub)2, (Sub)3, ..., (Sub)K) such that:
+1. The substring ‘(Sub)i’ is a non-empty string, for all 1 <= i <= K.
+2. (Sub)1 + (Sub)2 + (Sub)3 + … + (Sub)K = ‘S’, which means the concatenation of all the substrings is equal to ‘S’.
+3. (Sub)i = (Sub)(K-i+1), for all 1 <= i <= ‘K’.
+You have to find the largest possible value of ‘K’
+```cpp
+int longestChunkedPal(string &s)
+{
+	int ans = 0;
+	int l = 0;
+	for(int r=1; 2*r <=s.size(); ++r){
+		if(equal(begin(s)+l, begin(s)+r, end(s)-r)){
+			ans += 2;
+			l = r;
+		}
+	}
+	return ans + (2*l < s.size());
+}
+```
+## Palindrome Partitioning III
+On Valentine’s Day, Alice and Bob planned to go on a dinner date, but Alice is still unsure about Bob, so she decided to give him a task. She gave him a string ‘S’ of length ‘N’ containing only lowercase English letters and an integer ‘K’ and told him that he could:
+Change some characters of ‘S’ to other lowercase letters  (if required).
+
+Divide ‘S’ into ‘K’ non-empty disjoint substrings such that each substring is a palindrome.
+She asked Bob to find the minimum number of characters he needs to change to divide the given string in the required condition. Since Bob is busy preparing a perfect date for her, he called you to solve Alice’s challenge. Can you help Bob to impress her?
+
+```cpp
+int paliPartitioning(string &s, int K){
+    int n = s.size();
+    vector<vector<int>> dp(n+1, vector<int>(K+1, n)); //dp[i][k] = min cost to make k palindromes by s[0..i)
+    vector<vector<int>> cost(n, vector<int>(n)); // cost[i][j] = min cost to make s[i..j] palindromes
+    
+    for(int d=1; d<n; ++d)
+        for(int i=0, j=d; j<n; ++i, ++j)
+            cost[i][j] = (s[i] != s[j]) + cost[i+1][j-1];
+
+    for(int i=1; i<=n; ++i)
+        dp[i][1] = cost[0][i-1];
+    
+    for(int k=2; k<=K; ++k)
+        for(int i=k; i<=n; ++i)
+            for(int j=k-1; j<i; ++j)
+                dp[i][k] = min(dp[i][k], dp[j][k-1]+cost[j][i-1]);
+    
+    return dp[n][K];
+}
+```
+## Most Lucky String $
+Mr. X is planning to visit Ninja Land. Ninja Land has 'N' cities numbered from 0 to 'N-1' and 'M' bidirectional roads. Each road connects two of the 'N' cities, and no two cities have multiple roads between them. All the 'N' cities have a certain 3 letter code given in the array 'ARR'. Mr. X will stay at Ninja land for exactly 'K' days, and he does not like to stay in the same city for two consecutive days. Therefore, he needs to change his city every day of his stay. He also has a special string that is initially empty. Mr. X has a habit that whenever he visits a city, he appends the code of that city to his special string.
+Mr. X has a lucky string 'S' of length '3*K'. Mr. X wants to plan his stay in such a manner that the number of places where the final special string differs from the lucky string is the minimum possible. Your task is to find any such order of cities that Mr. X should visit satisfying the above conditions.
+```
+Constraints :
+1 <= T <= 10
+2 <= N <= 1000
+1 <= M  <= min(1000,(N*(N-1))/2)
+1 <= K <= 100
+|ARR[i]| = 3 
+|S| = 3*K 
+0 <= City1, City2 <= N-1
+
+Every city is reachable from every other city, any two cities are directly connected by at most one road and all the input strings contain uppercase English letters only.
+
+Where 'T' denotes the number of test cases, 'N' denotes the number of cities, 'M' denotes the number of roads, 'K' denotes the number of cities that Mr. X will visit, ARR[i] denotes the 'i'th' element of the array 'ARR', 'S' denotes the lucky string, 'City1' and 'City2' denotes the two cities that are connected by the 'i'th' road, .
+
+Time Limit : 1 sec
+Sample Input 1 :
+2
+3 2 2
+AAB BBD ABC
+AABABCBBD
+0 2
+1 2
+4 3 1
+AAA BBD CCD BBC
+BFC
+1 2
+0 3
+1 3
+Sample Output 1 :
+valid
+valid
+Explanation for Sample Input 1 :
+For the first test case : 
+Mr. X can start his journey at City-0, then go to City-2 and then end his journey at City-1. The special string will be "AABABCBBD" which is exactly same as the lucky string.
+
+For the second test case :
+Mr. X should visit City-3 only, as the special string in this case differs by the lucky string at only one place.
+```
+```cpp
+vector<int> findOptimalOrder(vector<string> &a, vector<vector<int>> &roads, string &s)
+{
+   int n = a.size(), m = roads.size(), k = (s.size())/3;
+   vector<vector<int>> dp(n, vector<int>(k, 1e9));
+   vector<vector<int>> dp2(n, vector<int>(k, -1));
+
+   for(int i=0; i<n; ++i){
+       dp[i][0] = 0;
+       for(int l=0; l<3; ++l)
+        dp[i][0] += (a[i][l] != s[l]);
+   }
+
+   for(int i=1; i<k; ++i){
+       for(auto& r : roads){
+           int city0 = r[0], city1 = r[1];
+           int cost0 = 0, cost1 = 0;
+           for (int l = 0; l < 3; ++l) {
+             cost0 += (a[city0][l] != s[3 * i + l]);
+             cost1 += (a[city1][l] != s[3 * i + l]);
+           }
+
+               if(dp[city0][i] > dp[city1][i-1] + cost0){
+                   dp[city0][i] = dp[city1][i-1] + cost0;
+                   dp2[city0][i] = city1;
+               }
+               if (dp[city1][i] > dp[city0][i - 1] + cost1) {
+                 dp[city1][i] = dp[city0][i - 1] + cost1;
+                 dp2[city1][i] = city0;
+               }
+           
+       }
+   }
+   int mncost = 1e9;
+   int st = -1;
+   for(int i=0; i<n; ++i){
+       if(mncost > dp[i][k-1]){
+           st = i;
+           mncost = dp[i][k-1];
+       }
+   }
+
+   vector<int> ans(k);
+   int days = k-1;
+   while(days>=0){
+       ans[days] = st;
+       st = dp2[st][days];
+       --days;
+   }
+   return ans;
+}
+```
+
