@@ -210,3 +210,630 @@ cout<<ans<<"\n";
 return 0;
 }
 ```
+## Maximum Query
+You are given an array of integet of size N and Q queries in form of (l, r). You are supposed to find the maximum value of array between index l and r (both inclusive)
+```cpp
+#include <bits/stdc++.h>
+using namespace std;
+#define ll long long
+const int mxN = 1e4;
+int n, q;
+ll x[mxN];
+
+struct node {
+  ll mx;
+} st[1 << 15];
+
+void upd(int l1, int x, int i = 1, int l2 = 0, int r2 = n - 1) {
+  if (l2 == r2) {
+    st[i].mx = x;
+    return;
+  }
+  int m2 = (l2 + r2) / 2;
+  if (l1 <= m2)
+    upd(l1, x, 2 * i, l2, m2);
+  else
+    upd(l1, x, 2 * i + 1, m2 + 1, r2);
+  st[i].mx = max(st[2 * i].mx, st[2 * i + 1].mx);
+}
+
+int qry(int l1, int r1, int i = 1, int l2 = 0, int r2 = n - 1) {
+  if (l1 <= l2 && r2 <= r1) {
+    return st[i].mx;
+  }
+  int m2 = (l2 + r2) / 2;
+  return max(l1 <= m2 ? qry(l1, r1, 2 * i, l2, m2) : (int)-1e9,
+             m2 < r1 ? qry(l1, r1, 2 * i + 1, m2 + 1, r2) : (int)-1e9);
+}
+int main() {
+  ios::sync_with_stdio(0);
+  cin.tie(0);
+  cin >> n;
+  for (int i = 0; i < n; ++i)
+    cin >> x[i], upd(i, x[i]);
+
+  cin >> q;
+  while (q--) {
+    int a, b;
+    cin >> a >> b;
+    cout << qry(a, b) << '\n';
+  }
+  return 0;
+}
+```
+## This is Sparta!
+Send Feedback
+King Leonidas of Sparta is preparing his men and country for a war against the Persian King Xerxes. He has N soldiers with him and he has arranged them in a line at The Hot Gates. Let us number them from 1 to N. Leonidas will fight Xerxes' army for Q days, and each day he can send only one of his men to fight.
+For each warrior, we know 2 traits: Strength and Cowardice. These are given to us in a form of integer. Each day, Leonidas can choose his warrior from a range Li to Ri, and he will choose the warrior with maximum Strength value. If there is more than one warrior having the same maximum Strength value, he will choose the warrior with minimum Cowardice value. If there is still more than 1 warrior with the same maximum Strength value and same minimum Cowardice value, he chooses the one with lower index in line.
+King Leonidas is ready to lay his life for Sparta. You, his right hand man, have to help him save Sparta by helping him choose a warrior for each day.
+Input Format:
+First line contains a single integer N, denoting the number of warriors Leonidas has. 
+Second line contains N space separated integers, representing Strength of ith warrior. 
+Third line contains N space separated integers, representing Cowardice of ith warrior
+Next line contains a single integer Q, denoting the number of days Queen Vasya chooses a warrior. 
+Each of the next Q lines contains 2 integers Li and Ri.
+```
+Constraints:
+1 ≤ N,Q ≤ 10^5
+1 ≤ Ai,Bi ≤ 10^9
+1 ≤ Li ≤ Ri
+Output Format:
+For each Li and Ri, print the index of the warrior that King Leonidas should choose.
+Sample Input 1:
+5
+1 8 4 6 8
+4 8 6 3 7
+4
+1 4
+2 4
+3 4
+1 5
+Sample Output 1:
+2
+2
+4
+5
+```
+```cpp
+#include <bits/stdc++.h>
+using namespace std;
+#define ll long long
+const int mxN = 1e5;
+int n, q;
+
+struct warrior{
+  int a, b; //a=strength, b=coward
+} arr[1<<19];
+
+struct node{
+  int a, b;
+  int id;
+} st[1<<19];
+
+void build(int l, int r, int i){
+  if (l == r) {
+    st[i].a = arr[l].a;
+    st[i].b = arr[l].b;
+    st[i].id = l;
+    return;
+  }
+  int m = (l + r) / 2;
+  build(l, m, 2 * i + 1);
+  build(m + 1, r, 2 * i + 2);
+
+  node lc = st[2 * i + 1];
+  node rc = st[2 * i + 2];
+  if (lc.a > rc.a){ 
+    st[i].a = lc.a;
+    st[i].b = lc.b;
+    st[i].id = lc.id;
+  }
+  else if(lc.a < rc.a){
+    st[i].a = rc.a;
+    st[i].b = rc.b;
+    st[i].id = rc.id;
+  }
+  else{
+    if(lc.b < rc.b){
+      st[i].a  = lc.a;
+      st[i].b = lc.b;
+      st[i].id = lc.id;
+    }
+    else if(lc.b > rc.b){
+      st[i].a = rc.a;
+      st[i].b = rc.b;
+      st[i].id = rc.id;
+    }
+    else{
+      if(lc.id < rc.id){
+        st[i].a = lc.a;
+        st[i].b = lc.b;
+        st[i].id = lc.id;
+      }
+      else{
+        st[i].a = rc.a;
+        st[i].b = rc.b;
+        st[i].id = rc.id;
+      }
+    }
+  }
+}
+
+node qry(int l, int r, int i, int l1, int r1){
+  if( l > r1 || r < l1){
+    node ans;
+    ans.a = INT_MIN;
+    ans.b = INT_MAX;
+    ans.id = INT_MAX;
+    return ans;
+  }
+
+  if(l>=l1 && r<=r1)
+    return st[i];
+  
+  int m = (l+r)/2;
+  node lc = qry(l, m, 2*i+1, l1, r1);
+  node rc = qry(m+1, r, 2*i+2, l1, r1);
+
+  if(lc.a > rc.a) return lc;
+  else if(lc.a < rc.a) return rc;
+  else{
+    if(lc.b < rc.b) return lc;
+    else if(lc.b > rc.b) return rc;
+    else{
+      if(lc.id < rc.id) return lc;
+      else return rc;
+    }
+  }
+}
+int main() {
+  ios::sync_with_stdio(0);
+  cin.tie(0);
+  cin >> n;
+  for(int i=0; i<n; ++i){
+    cin >> arr[i].a;
+  }
+  for(int i=0; i<n; ++i){
+    cin >> arr[i].b;
+  }
+
+  build(0, n-1, 0);
+  int q; cin >> q;
+  while (q--) {
+    int a, b;
+    cin >> a >> b, --a, --b;
+    cout << qry(0, n-1, 0, a, b).id+1 << '\n';
+  }
+  return 0;
+}
+```
+## 2 vs 3
+The fight for the best number in the globe is going to finally come to an end.The top two contenders for the best number are number 2 and number 3.It's the final the entire world was waiting for. Expectorates from all across the globe came to witness the breath taking finals.
+The finals began in an astonishing way.A common problem was set for both of them which included both these number.The problem goes like this.
+Given a binary string (that is a string consisting of only 0 and 1). They were supposed to perform two types of query on the string.
+Type 0: Given two indices l and r.Print the value of the binary string from l to r modulo 3.
+
+Type 1: Given an index l flip the value of that index if and only if the value at that index is 0.
+
+The problem proved to be a really tough one for both of them.Hours passed by but neither of them could solve the problem.So both of them wants you to solve this problem and then you get the right to choose the best number in the globe.
+```cpp
+#include<bits/stdc++.h>
+using namespace std;
+
+const int mxN = 1e5+5;
+
+int st[4*mxN];
+int pwr[mxN];
+
+void build(string& s, int l, int r, int i){
+    if(l==r){
+        st[i] = s[l]-'0';
+        return;
+    }
+    int m = (l+r)/2;
+    build(s, l, m, 2*i+1);
+    build(s, m+1, r, 2*i+2);
+
+    st[i] = (st[2*i+1] * pwr[r-m] + st[2*i+2]) % 3;
+}
+
+void upd(int l, int r, int id, int i){
+    if(l>id || r<id) return;
+    if(l==r){
+        st[i] = 1; //flipping
+        return;
+    }
+    int m = (l+r)/2;
+    
+    upd(l, m, id, 2*i+1);
+    upd(m+1, r, id, 2*i+2);
+
+    st[i] = (st[2*i+1] * pwr[r-m] + st[2*i+2])%3;
+}
+
+int qry(int l, int r, int a, int b, int i){
+    if(l>b || r<a) return 0;
+    if(l>=a && r<=b){
+        return (st[i] * pwr[b-r])%3;
+    }
+    int m = (l+r)/2;
+    int lq = qry(l, m, a, b, 2*i+1);
+    int rq = qry(m+1, r, a, b, 2*i+2);
+    return (lq+rq) % 3;
+}
+
+int main(){
+    
+    ios::sync_with_stdio(false); cin.tie(0);
+    int n, q;
+    string s;
+    cin>>n;
+    cin>>s;
+   
+    pwr[0]=1;
+    for(int i=1; i<n; ++i)
+        pwr[i] = (pwr[i-1]*2)%3;
+    
+    build(s, 0, n-1, 0);
+    cin>>q;
+    while(q--){
+        int qt; cin>>qt;
+        if(qt==1){
+            int idx; cin>>idx;
+            if(s[idx]=='0')
+                upd(0, n-1, idx, 0);
+        }else{
+            int a, b; cin>>a>>b;
+            cout << qry(0, n-1, a, b, 0) << '\n';
+        }
+    }
+    return 0;
+}
+```
+## The GCD Dillema $
+Dwight is always bragging about how amazing he is at solving complicated problems with much ease. Jim got tired of this and gave him an interesting problem to solve.
+Jim gave Dwight a sequence of integers a1, a2, ..., an and q queries x1, x2, ..., xq on it. For each query xi Dwight has to count the number of pairs (l, r) such that 1 ≤ l ≤ r ≤ n and GCD(al, al + 1, ..., ar) = xi. Dwight is feeling out of his depth here and asked you to be his Secret Assistant to the Regional Manager. Your first task is to help him solve the problem. Are you up to it?
+```cpp
+#include<bits/stdc++.h>
+using namespace std;
+// https://codeforces.com/problemset/problem/475/D
+// #define ll long long 
+// int gcd(int a, int b){
+//     if(a%b == 0) return b;
+//     return gcd(b, a%b);
+// }
+int main(){
+    ios::sync_with_stdio(false); cin.tie(0);
+    int n; cin>>n;
+    vector<int> a(n);
+    for(int i=0; i<n; ++i) cin>>a[i];
+
+    map<int, ll> ans;
+    map<int, int> divisors;
+    map<int, int> nxtDivisors;
+
+    for(int i=0; i<n; ++i){
+        nxtDivisors.clear();
+        for(auto& p: divisors){
+            nxtDivisors[__gcd(p.first, a[i])] += p.second;
+        }
+        nxtDivisors[a[i]]++;
+
+        swap(nxtDivisors, divisors);
+        for(auto& p: divisors)
+            ans[p.first] += p.second;
+    }
+   
+    int q;
+    cin >> q;
+    while(q--){
+        int x; cin>>x;
+        cout << ans[x] << '\n';
+    }
+    return 0;
+}
+```
+## Sheldon and Trains
+Sheldon always tells people, “When you have only one day to visit Los Angeles, make it a Train Day”. He loves spending time while travelling in trains and considers it a fun activity. Sheldon’s mom has come to visit him and he decides to take her out on a train tour of the city of Pasadena, along with his friend Howard. There are n train stations in the city. Howard knows how irritating Sheldon can be during a train ride. So, to keep him busy, Howard gives Sheldon a problem so interesting that he just cannot do anything else other than devote his entire mind to solving it. The problem goes like this. At the i-th station it's possible to buy only tickets to stations from i + 1 to ai (inclusive). No tickets are sold at the last station.
+Let ρi, j be the minimum number of tickets one needs to buy in order to get from stations i to station j. Sheldon’s task is to compute the sum of all values ρi, j among all pairs 1 ≤ i < j ≤ n. As brilliant as he may be, he asked for your help.
+```cpp
+#include<bits/stdc++.h>
+using namespace std;
+// https://codeforces.com/problemset/problem/675/E
+const int maxn = 1 << 18;
+pair<int, int> tree[2*maxn];
+
+void build(const vector<int> &a, int n) {
+  for (int i = 0; i < n; i++)
+    tree[maxn + i] = {a[i], i};
+  for (int i = maxn - 1; i > 0; i--)
+    tree[i] = max(tree[i * 2], tree[i * 2 + 1]);
+}
+
+int get(int l, int r) {
+  pair<int, int> ans{-1, -1};
+  for (l += maxn, r += maxn + 1; l < r; l >>= 1, r >>= 1) {
+    if (l & 1)
+      ans = max(ans, tree[l++]);
+    if (r & 1)
+      ans = max(ans, tree[--r]);
+  }
+  return ans.second;
+}
+
+int main() {
+  ios_base::sync_with_stdio(false);
+  cin.tie(0);
+
+  int n;
+  cin >> n;
+  vector<int> a(n);
+  a[n - 1] = n - 1;
+  for (int i = 0; i < n - 1; i++) {
+    cin >> a[i];
+    a[i]--;
+  }
+
+  build(a, n);
+  vector<long long> dp(n);
+  long long ans = 0;
+  dp[n - 1] = 0;
+  for (int i = n - 2; ~i; i--) {
+    int mx = get(i + 1, a[i]);
+    dp[i] = dp[mx] - (a[i] - mx) + n - i - 1;
+    ans += dp[i];
+  }
+
+  cout << ans << '\n';
+}
+```
+## Maximum Sum In Subarray $$
+You are given a sequence A[1], A[2], ..., A[N].
+A query is defined as follows:
+```
+Query(x,y) = Max { a[i]+a[i+1]+...+a[j] ; x ≤ i ≤ j ≤ y }. 
+```
+Given M queries, write a program that outputs the results of these queries.
+```cpp
+#include<bits/stdc++.h>
+using namespace std;
+
+const int mxN = 1e5;
+int a[mxN];
+
+struct node {
+    int mx, s, mxl, mxr;
+} st[1<<19];
+
+void build(int l, int r, int i){
+    if(l==r){
+        st[i].s = a[l];
+        st[i].mx = a[l];
+        st[i].mxl = a[l];
+        st[i].mxr = a[l];
+        return;
+    }
+    int m = (l+r)/2;
+    build(l, m, 2*i+1);
+    build(m+1, r, 2*i+2);
+    st[i].s = st[2*i+1].s + st[2*i+2].s;
+    st[i].mxl = max(st[2*i+1].mxl, st[2*i+2].mxl+st[2*i+1].s);
+    st[i].mxr = max(st[2 * i + 2].mxr, st[2 * i + 1].mxr + st[2 * i + 2].s);
+
+    st[i].mx = max(
+        st[2 * i+1].mx,
+        max(st[2 * i + 2].mx,
+            max(st[2 * i+1].s + st[2 * i + 2].mxl,
+                max(st[2 * i + 2].s + st[2 * i+1].mxr, st[2 * i+1].mxr + st[2 * i + 2].mxl))));
+}
+
+node qry(int l, int r, int i, int l1, int r1){
+    if(l>r1 || r<l1)
+      return {-100000, -100000, -100000, -100000};
+
+    if(l >= l1 && r <= r1) return st[i];
+    
+    int m = (l+r)/2;
+    node ql = qry(l, m, 2*i+1, l1, r1);
+    node qr = qry(m+1, r, 2*i+2, l1, r1);
+    node ans;
+    ans.s = ql.s + qr.s;
+    ans.mxl = max(ql.mxl, ql.s + qr.mxl);
+    ans.mxr = max(ql.mxr + qr.s, qr.mxr);
+    ans.mx = max(ql.mx, max(qr.mx, max(ql.s+qr.mxl, max(qr.s+ql.mxr, ql.mxr+qr.mxl))));
+
+    return ans;
+}
+int main(){
+    ios::sync_with_stdio(false); cin.tie(0);
+
+    int n; cin>>n;
+    for(int i=0; i<n; ++i) cin>>a[i];
+
+    build(0, n-1, 0);
+    int q; cin>>q;
+    while(q--){
+        int a, b; cin>>a>>b, --a, --b;
+        cout << qry(0, n-1, 0, a, b).mx << '\n';
+    }
+    return 0;
+}
+```
+## Legion of Doom $
+Lex Luthor’s Legion of Doom is a tough organization to get into, even for greatest supervillains. Recently, a spot has opened up because The Mad Hatter has retired. Harley Quinn doesn't want to waste this opportunity, and jumps at the chance of the interview. But she has a PhD in psychology, not in Computer Science. She has kidnapped you and will let you go only if you are able to solve the evil questions of Lex Luthor.
+You are given an array of N elements, which are initially all 0. After that you will be given C commands. They are -
+0 p q v - you have to add v to all numbers in the range of p to q (inclusive), where p and q are two indexes of the array.
+1 p q - output a line containing a single integer which is the sum of all the array elements between p and q (inclusive)
+```cpp
+#include<bits/stdc++.h>
+using namespace std;
+
+#define ll long long
+const int mxN = 1e4;
+int n, q;
+ll x[mxN];
+
+struct node{
+    ll mn, s, lz;
+} st[1<<16];
+
+void app(int i, ll x, int l2, int r2){
+    // st[i].mn += x;
+    st[i].s += x*(r2-l2+1);
+    st[i].lz += x;
+}
+void psh(int i, int l2, int m2, int r2){
+    app(2*i, st[i].lz, l2, m2);
+    app(2*i+1, st[i].lz, m2+1, r2);
+    st[i].lz=0;
+}
+void upd(int l1, ll x, int i=1, int l2=0, int r2=n-1){
+    if(l2==r2){
+        st[i].mn=x;
+        st[i].s=x;
+        return;
+    }
+    int m2 = (l2+r2)/2;
+    psh(i, l2, m2, r2);
+    if(l1<=m2)
+        upd(l1, x, 2*i, l2, m2);
+    else
+        upd(l1, x, 2*i+1, m2+1, r2);
+    // st[i].mn = min(st[2*i].mn, st[2*i+1].mn);
+    st[i].s = st[2*i].s + st[2*i+1].s;
+}
+
+void upd2(int l1, int r1, int x, int i=1, int l2=0, int r2=n-1){
+    if(l1<=l2 &&r2<=r1){
+        app(i, x, l2, r2);
+        return;
+    }
+    int m2 = (l2+r2)/2;
+    psh(i, l2, m2, r2);
+    if(l1<=m2)
+        upd2(l1, r1, x, 2*i, l2, m2);
+    if(m2<r1)
+        upd2(l1, r1, x, 2*i+1, m2+1, r2);
+    // st[i].mn = min(st[2*i].mn, st[2*i+1].mn);
+    st[i].s = st[2*i].s + st[2*i+1].s;
+}
+ll qry(int l1, int r1, int i=1, int l2=0, int r2=n-1){
+    if(l1<=l2 && r2<=r1){
+        return st[i].s;
+    }
+    int m2 = (l2+r2)/2;
+    psh(i, l2, m2, r2);
+    return (l1<=m2? qry(l1, r1, 2*i, l2, m2):0) + (m2<r1? qry(l1, r1, 2*i+1, m2+1, r2):0);
+}
+
+int main(){
+    ios::sync_with_stdio(false); cin.tie(0);
+    int t; cin>>t;
+
+    while(t--){
+        cin>>n>>q;
+        for(int i=0; i<n; ++i)
+            upd(i, 0);
+        while(q--){
+            int type; cin>>type;
+            if (type == 0) {
+              int a, b, v;
+              cin >> a >> b >> v, --a, --b;
+              upd2(a, b, v);
+            } else {
+                int a, b; cin >> a >> b, --a, --b;
+              cout << qry(a, b) << '\n';
+            }
+        }
+        
+    }
+}
+
+// typedef long long int ll;
+// void update_add(ll *tree, ll *lazy, ll start, ll end, ll treenode, ll left,
+//                 ll right, ll value) {
+//   if (start > end) {
+//     return;
+//   }
+//   if (lazy[treenode] != 0) {
+//     tree[treenode] += (end - start + 1) * lazy[treenode];
+//     if (start != end) {
+//       lazy[2 * treenode] += lazy[treenode];
+//       lazy[2 * treenode + 1] += lazy[treenode];
+//     }
+//     lazy[treenode] = 0;
+//   }
+//   // completely outside
+//   if (start > right || end < left) {
+//     return;
+//   }
+//   // completely inside
+//   if (start >= left && end <= right) {
+//     tree[treenode] += (end - start + 1) * value;
+//     if (start != end) {
+//       lazy[2 * treenode] += value;
+//       lazy[2 * treenode + 1] += value;
+//     }
+//     return;
+//   }
+//   // partial overlap
+//   ll mid = (start + end) / 2;
+//   update_add(tree, lazy, start, mid, 2 * treenode, left, right, value);
+//   update_add(tree, lazy, mid + 1, end, 2 * treenode + 1, left, right, value);
+//   tree[treenode] = tree[2 * treenode] + tree[2 * treenode + 1];
+//   return;
+// }
+// ll query_sum(ll *tree, ll *lazy, ll start, ll end, ll treenode, ll left,
+//              ll right) {
+//   if (start > end) {
+//     return 0;
+//   }
+//   if (lazy[treenode] != 0) {
+//     tree[treenode] += (end - start + 1) * lazy[treenode];
+//     if (start != end) {
+//       lazy[2 * treenode] += lazy[treenode];
+//       lazy[2 * treenode + 1] += lazy[treenode];
+//     }
+//     lazy[treenode] = 0;
+//   }
+//   // completely outside
+//   if (start > right || end < left) {
+//     return 0;
+//   }
+//   // completely inside
+//   if (start >= left && end <= right) {
+//     return tree[treenode];
+//   }
+//   // partial overlap
+//   ll mid = (start + end) / 2;
+//   ll left_child = query_sum(tree, lazy, start, mid, 2 * treenode, left, right);
+//   ll right_child =
+//       query_sum(tree, lazy, mid + 1, end, 2 * treenode + 1, left, right);
+//   return left_child + right_child;
+// }
+// int main() {
+//     ios::sync_with_stdio(0); cin.tie(0);
+//   ll t;
+//   cin >> t;
+//   while (t--) {
+//     ll n, c;
+//     cin >> n >> c;
+
+//     ll *tree = new ll[4 * n]();
+//     ll *lazy = new ll[4 * n]();
+//     while (c--) {
+//       ll command_type;
+//       cin >> command_type;
+//       if (command_type == 0) {
+//         ll left, right, value;
+//         cin >> left >> right >> value;
+//         update_add(tree, lazy, 0, n - 1, 1, left - 1, right - 1, value);
+//       } else {
+//         ll left, right;
+//         cin >> left >> right;
+//         cout << query_sum(tree, lazy, 0, n - 1, 1, left - 1, right - 1) << endl;
+//       }
+//     }
+//   }
+// }
+```
