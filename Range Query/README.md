@@ -138,7 +138,8 @@ a triple (i, j, k) (1 ≤ i ≤ j ≤ n). For each k-query (i, j, k), you have t
 of elements greater than k in the subsequence ai, ai+1
 , ..., aj
 .
-```Algorithm:
+```
+Algorithm:
 We can solve this problem by using merge sort tree as follows:
 ● Imagine we have an array b1, b2, ..., bn which, and bi = 1 if and only
 if ai > k, then we can easily answer the query (i, j, k) in O(log(n)) using a
@@ -149,7 +150,8 @@ permutation p1, p2, ..., pn where ap1 ≤ ap2 ≤ ... ≤ apn)
 ● At first we'll set all array b to 1 and we will set all of them to 0 one by one
 ● Consider after sorting the queries in increasing order of their k, we have a
 permutation w1, w2, ..., wq (of 1, 2, ..., q) where kw1 ≤ kw2 ≤ kw2 ≤ ... ≤ kwq (we
-keep the answer to the i - th query in ansi .```
+keep the answer to the i - th query in ansi .
+```
 ```cpp
 #include<bits/stdc++.h>
 #define M (beg + end)/2
