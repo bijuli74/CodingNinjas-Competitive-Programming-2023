@@ -2097,5 +2097,66 @@ vector<int> countPokemon(int n, vector<pair<int,int>> edges, vector<int> poke, i
     
 }
 ```
+## Tree and Queries $$
+You are given a tree with ‘N’ vertex having ‘N’ - 1 edge. Each edge has a weight ‘W’ associated with it. You are also given an array ‘QUERY’ of size ‘Q’, where each query consists of two nodes ‘U’ and ‘V’ and an integer ‘K’. Your task is to print the XOR of all the edges present between the nodes ‘U’, and ‘V’ and have their weight smaller than or equal to ‘K’.
+```cpp
+const int N = 1e5+5;
+vector<pair<int, int>> adj[N];
+int anc[N][20], d[N], dis[N];
 
+
+void dfs(int u, int p, int w){
+    anc[u][0] = p;
+    d[u] = d[p]+1;
+   dis[u] = dis[p]^w;
+    for(int i=1; i<=19; ++i)
+        anc[u][i] = anc[anc[u][i-1]][i-1];
+    for(auto it : adj[u]){
+        int v = it.first, w = it.second;
+        if(v==p) continue;
+        dfs(v, u, w);
+    }
+}
+
+int lca(int x, int y){
+    if(d[x] < d[y]) swap(x, y);
+    for(int i=19; ~i; --i) if(d[anc[x][i]] >= d[y]) x=anc[x][i];
+    if(x==y) return x;
+    for(int i=19; ~i; --i) if(anc[x][i] != anc[y][i]) x=anc[x][i], y=anc[y][i];
+    return anc[x][0];
+}
+
+void clear(){
+    for(int i=0; i<N; ++i){
+        adj[i].clear();
+        d[i]=dis[N]=0;
+    }
+}
+int qry(int u, int v, int k){
+    int p=lca(u, v);
+    int ans = (dis[u]^dis[v]^dis[p]^dis[anc[p][0]]);
+    return ans & ((1<<(k+1))-1);
+}
+
+vector<int> XORquery(int n, vector<vector<int>> &edges, int q, vector<vector<int>> &query) {
+    // N = n;
+    clear();
+    vector<int> res;
+
+    for(int i=0; i<edges.size(); ++i){
+        int u=edges[i][0], v=edges[i][1], w=edges[i][2];
+      adj[u].push_back({v, w});
+      adj[v].push_back({u, w});
+    }
+
+    dfs(1, 0, 0);
+    for(int i=0; i<query.size(); ++i){
+        int u=query[i][0], v=query[i][1], k=query[i][2];
+        int p=lca(u, v);
+        int ans = qry(u, v, k);
+        res.push_back(ans);
+    }
+    return res;
+}
+```
 
