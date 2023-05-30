@@ -1723,4 +1723,277 @@ vector<int>countNumber(int n, vector<int> &a)
     return ans;
 }
 ```
+## Counting Even/Odd
+Tanmay and Rohit are best buddies. One day Tanmay gives Rohit a problem to test his intelligence and skills. He gives him an array of N natural numbers and asks him to solve the following queries:-
+Query 0:
+0 x y
+This operation modifies the element present at index x to y.
+Query 1:
+1 l r 
+This operation counts the number of even numbers in range l to r inclusive.
+Query 2:
+2 l r 
+This operation counts the number of odd numbers in range l to r inclusive.
+```cpp
+#include <bits/stdc++.h>
+using namespace std;
 
+// void buildTree(int *a, pair<int, int> *tree, int si, int ei, int treeNode) {
+//   if (si == ei) {
+//     if (a[si] % 2 == 0) {
+//       tree[treeNode].first = 1;
+//       tree[treeNode].second = 0;
+//     } else {
+//       tree[treeNode].first = 0;
+//       tree[treeNode].second = 1;
+//     }
+//     return;
+//   }
+//   int mid = (si + ei) / 2;
+//   buildTree(a, tree, si, mid, 2 * treeNode);
+//   buildTree(a, tree, mid + 1, ei, 2 * treeNode + 1);
+//   tree[treeNode].first =
+//       tree[2 * treeNode].first + tree[2 * treeNode + 1].first;
+//   tree[treeNode].second =
+//       tree[2 * treeNode].second + tree[2 * treeNode + 1].second;
+//   return;
+// }
+// void update(int *a, pair<int, int> *tree, int start, int end, int treeNode,
+//             int idx, int value) {
+//   if (start == end) {
+//     a[idx] = value;
+//     if (value % 2 == 0) {
+//       tree[treeNode].first = 1;
+//       tree[treeNode].second = 0;
+//     } else {
+//       tree[treeNode].first = 0;
+//       tree[treeNode].second = 1;
+//     }
+//     return;
+//   }
+//   int mid = (start + end) / 2;
+//   if (idx > mid) {
+//     update(a, tree, mid + 1, end, 2 * treeNode + 1, idx, value);
+//   } else {
+//     update(a, tree, start, mid, 2 * treeNode, idx, value);
+//   }
+//   tree[treeNode].first =
+//       tree[2 * treeNode].first + tree[2 * treeNode + 1].first;
+//   tree[treeNode].second =
+//       tree[2 * treeNode].second + tree[2 * treeNode + 1].second;
+//   return;
+// }
+
+// pair<int, int> getAns(pair<int, int> *tree, int start, int end, int treeNode,
+//                       int left, int right) {
+//   if (start > end) {
+//     pair<int, int> ans = {0, 0};
+//     return ans;
+//   }
+//   if (left > end || right < start) {
+//     pair<int, int> ans = {0, 0};
+//     return ans;
+//   }
+//   if (start >= left && end <= right) {
+//     return tree[treeNode];
+//   }
+//   int mid = (start + end) / 2;
+//   pair<int, int> ans, ans1, ans2;
+//   ans1 = getAns(tree, start, mid, 2 * treeNode, left, right);
+//   ans2 = getAns(tree, mid + 1, end, 2 * treeNode + 1, left, right);
+//   ans.first = ans1.first + ans2.first;
+//   ans.second = ans1.second + ans2.second;
+//   return ans;
+// }
+
+// vector<int> solve(int n, vector<int> &arr, int q,
+//                   vector<vector<int>> &queries) {
+//   int *a = new int[n];
+//   for (int i = 0; i < n; i++) {
+//     a[i] = arr[i];
+//   }
+//   pair<int, int> *tree = new pair<int, int>[4 * n]();
+//   buildTree(a, tree, 0, n - 1, 1);
+//   vector<int> ans;
+//   for (int i = 0; i < q; i++) {
+//     vector<int> qr = queries[i];
+//     int a1, b, c;
+//     a1 = qr[0];
+//     b = qr[1];
+//     c = qr[2];
+//     if (a1 == 0) {
+//       update(a, tree, 0, n - 1, 1, b, c);
+//     } else if (a1 == 1) {
+//       ans.push_back(getAns(tree, 0, n - 1, 1, b, c).first);
+//     } else if (a1 == 2) {
+//       ans.push_back(getAns(tree, 0, n - 1, 1, b, c).second);
+//     }
+//   }
+//   return ans;
+// }
+
+class segmentTree
+{
+public:
+    vector<int> segment;
+    segmentTree(int N)
+    {
+        // Creating a segment tree of size 4*N+1.
+        segment = vector<int>(4 * N + 1);
+    }
+
+    void buildTree(vector<int> &arr, int l, int r, int index = 0)
+    {
+        if (l > r)
+        {
+            return;
+        }
+
+        // It means it has only one element
+        if (l == r)
+        {
+            segment[index] = (arr[l] % 2 == 0);
+            return;
+        }
+
+        int mid = (l + r) / 2;
+        int lChild = 2 * index + 1;
+        int rChild = 2 * index + 2;
+
+        buildTree(arr, l, mid, lChild);
+        buildTree(arr, mid + 1, r, rChild);
+
+        // Merging ans from leftChild and rightChild.
+        segment[index] = segment[lChild] + segment[rChild];
+    }
+
+    int query(int l, int r, int ql, int qr, int index = 0)
+    {
+        // If the l and r lies inside queries range then that complete node is part of ans.
+        if (ql <= l && qr >= r)
+        {
+            return segment[index];
+        }
+
+        int mid = (l + r) / 2;
+
+        // If the leftChild has no overlapping with queries range then ans only lies in right part.
+        if (mid < ql)
+        {
+            return query(mid + 1, r, ql, qr, 2 * index + 2);
+        }
+
+        // If the rightChild has no overlapping with queries range then ans only lies in left part.
+        if (mid + 1 > qr)
+        {
+            return query(l, mid, ql, qr, 2 * index + 1);
+        }
+
+        int ans1 = query(l, mid, ql, qr, 2 * index + 1);
+        int ans2 = query(mid + 1, r, ql, qr, 2 * index + 2);
+
+        // Merging answer from left and right child.
+        return ans1 + ans2;
+    }
+
+    void update(int l, int r, int i, int element, int index = 0)
+    {
+        if (l > r || i < l || i > r)
+        {
+            return;
+        }
+        if (l == r)
+        {
+            segment[index] = element;
+            return;
+        }
+        int mid = (l + r) >> 1;
+        int lChild = 2 * index + 1;
+        int rChild = 2 * index + 2;
+
+        update(l, mid, i, element, lChild);
+        update(mid + 1, r, i, element, rChild);
+
+        // Merging ans from leftChild and rightChild.
+        segment[index] = segment[lChild] + segment[rChild];
+    }
+};
+
+vector<int> solve(int N, vector<int> &arr, int q, vector<vector<int>> &queries)
+{
+    segmentTree tree(N);
+    // Building tree corresponding to array.
+    tree.buildTree(arr, 0, N - 1);
+    vector<int> ans1;
+    for (int i = 0; i < q; i++)
+    {
+        if (queries[i][0] == 0)
+        {
+            int l = (queries[i][2] % 2 == 0);
+            tree.update(0, N - 1, queries[i][1], l);
+        }
+        else
+        {
+            int ans = tree.query(0, N - 1, queries[i][1], queries[i][2]);
+            // Counting the answer for odd.
+            if (queries[i][0] == 2)
+            {
+                ans = queries[i][2] - queries[i][1] + 1 - ans;
+            }
+            ans1.push_back(ans);
+        }
+    }
+
+    return ans1;
+}
+int main() {
+    int n;
+    cin>>n;
+    vector<int> arr(n);
+    for(int i=0; i<n; ++i) cin>>arr[i];
+
+    int q;
+    
+    cin>>q; 
+
+    vector<vector<int>> Q(q, vector<int>(3));
+    
+    for (int i = 0; i < q; ++i) {
+      int qt, x, y;
+      cin >> qt >> x >> y;
+      if (qt == 0) {
+          --x;
+        Q[i][0] = qt; Q[i][1] = x; Q[i][2] = y;
+      }
+      else{
+          x -= 1; y -=1;
+          Q[i][0] = qt; Q[i][1] = x; Q[i][2] = y;
+      }
+    }
+
+    vector<int> res = solve(n, arr, q, Q);
+    for(int i=0; i<res.size(); ++i){
+        cout << res[i] << '\n';
+    }
+    return 0;
+}
+```
+## Ninja and Time
+Ninja is sitting for an online examination. He is encountered with a problem with the statement as “For each element in a given array ‘arr’ of integers, find the sum of numbers that have lower index than the current element and are greater than the current number.”
+Ninja knows that you are a very good programmer and can help him in solving the problem in a very less amount of time and come up with the most optimized approach to solve the problem. Help Ninja!
+```cpp
+vector<int> fenwikTree(vector<int> arr, int N)
+{
+    vector<int> res;
+    for(int i=0; i<N; i++){
+        int sum=0;
+        for(int j=i-1; j>=0; j--){
+          if (arr[j] > arr[i]) {
+            sum += arr[j];
+          }
+        }
+        res.push_back(sum);
+    }
+    return res;
+}
+```
