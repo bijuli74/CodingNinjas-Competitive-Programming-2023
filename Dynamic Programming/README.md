@@ -84,3 +84,54 @@ For example, N = 4, W = 10 and the weights and values of items are weights = [6,
 
 ## Loot Houses
 A thief wants to loot houses. He knows the amount of money in each house. He cannot loot two consecutive houses. Find the maximum amount of money he can loot.
+
+## One Away
+You are given two strings, string A and string B. Your task is to determine whether string A can be transformed into string B by performing only one of the following operations at most one (or maybe zero) time.
+1. You can delete a character from any position.
+2. You can replace a character with any other character.
+3. You can insert a character at any position. 
+Note :
+1. The strings are non-empty.
+2. The strings only contain lowercase English letters.
+
+```cpp
+// int editDistance(string &s, string &t) {
+//         if (s.size() < t.size()) swap(s, t);
+//         int M = s.size(), N = t.size();
+//         vector<int> dp(N + 1, 0);
+//         for (int i = 1; i <= N; ++i) dp[i] = i;
+//         for (int i = 1; i <= M; ++i) {
+//             int pre = dp[0];
+//             dp[0] = i;
+//             for (int j = 1; j <= N; ++j) {
+//                 int tmp = dp[j];
+//                 if (s[i - 1] == t[j - 1]) dp[j] = pre;
+//                 else dp[j] = min(pre, min(dp[j - 1], dp[j])) + 1;
+//                 pre = tmp;
+//             }
+//         }
+//         return dp[N];
+//     }
+
+bool isOneAway(string a, string b) {
+    // Edit distance variation One Edit Distance
+
+    int n=a.length(), m=b.length();
+    if(a==b) return 1;
+    if(n>m) return isOneAway(b, a);
+    
+    for(int i=0; i<n; ++i){
+        if(a[i] != b[i]){
+            if(n==m){
+                return a.substr(i+1)==b.substr(i+1);
+            }
+            return a.substr(i) == b.substr(i+1);
+        }
+    }
+    return n+1 == m;
+
+    // return editDistance(a, b) == 1;
+}
+```
+
+
