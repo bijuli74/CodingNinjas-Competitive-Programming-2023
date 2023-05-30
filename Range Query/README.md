@@ -1346,3 +1346,381 @@ int main(){
     return 0;
 }
 ```
+## KQUERY
+Given a sequence of n numbers a1, a2, ..., an and a number of k- queries. A k-query is a triple (i, j, k) (1 ≤ i ≤ j ≤ n). For each k-query (i, j, k), you have to return the number of elements greater than k in the subsequence ai, ai+1, ..., aj.
+```cpp
+#include<bits/stdc++.h>
+using namespace std;
+
+#define ll long long
+#define m (l+r)/2
+const int N = 1e5;
+vector<ll> st[4*N];
+ll a[N];
+
+void build(ll l, ll r, ll i){
+    if(l==r){
+        st[i].push_back(a[l]);
+        return;
+    }
+    // ll m = (l+r)/2;
+    build(l, m, 2*i+1);
+    build(m+1, r, 2*i+2);
+
+    merge(st[2*i+1].begin(), st[2*i+1].end(), st[2*i+2].begin(), st[2*i+2].end(), back_inserter(st[i]));
+}
+
+ll query(ll l, ll r, ll ql, ll qr, ll k, ll i){
+    if(ql<=l && qr>=r){
+        auto it = upper_bound(st[i].begin(), st[i].end(), k);
+        ll cntLesser = it - st[i].begin();
+        return (r-l+1-cntLesser);
+    }else if(ql>r || qr<l){
+        return 0;
+    }
+    // ll m = (l+r)/2;
+    return query(l, m, ql, qr, k, 2*i+1) + query(m+1, r, ql, qr, k, 2*i+2);
+}
+int main(){
+    ios::sync_with_stdio(false);
+    cin.tie(0);
+
+    ll n; cin>>n;
+    for(ll i=0; i<n; ++i) cin>>a[i];
+
+    build(0, n-1, 0);
+    ll q; cin>>q;
+    while(q--){
+        ll a, b, k; 
+        cin>>a>>b>>k, --a, --b;
+        cout << query(0, n-1, a, b, k, 0) << '\n';
+
+    }
+    return 0;
+}
+```
+## Ninja and Time
+Ninja is sitting for an online examination. He is encountered with a problem with the statement as “For each element in a given array ‘arr’ of integers, find the sum of numbers that have lower index than the current element and are greater than the current number.”
+Ninja knows that you are a very good programmer and can help him in solving the problem in a very less amount of time and come up with the most optimized approach to solve the problem. Help Ninja!
+```cpp
+// #include <bits/stdc++.h>
+// vector<int> fenwickTree(vector<int>& a, int n)
+// {
+//     vector<int> bit(n+1), ans;
+
+//     for(int i=0; i<n; ++i){
+//         int id, res=0;
+//         id = n;
+
+//         while(id){
+//             res += bit[id];
+//             id -= ( id * (-id));
+//         }
+//         int cur = 0;
+//         id = a[i];
+//         while(id){
+//             cur += bit[id];
+//             id -= (id & (-id));
+//         }
+//         int x = res-cur;
+//         ans.push_back(x);
+
+//         id=a[i];
+//         while(id <= n){
+//             bit[id] += a[i];
+//             id += (id & (-id));
+
+//         }
+//     }
+//     return ans;
+// }
+
+vector<int> fenwikTree(vector<int> arr, int N) {
+
+  vector<int> res;
+
+  for (int i = 0; i < N; i++) {
+    int sum = 0;
+    for (int j = i - 1; j >= 0; j--) {
+
+      // If previous element is greater then the current element.
+      if (arr[j] > arr[i]) {
+        sum = sum + arr[j];
+      }
+    }
+    res.push_back(sum);
+  }
+
+  return res;
+}
+
+// /*
+//     Time Complexity: O(N * log(1000000))
+//     SpaceComplexity: O(1000000)
+
+//     Where 'N' denotes the number of elements in the array.
+// */
+
+// // Declaring Fenwick Tree.
+// const int maxn = 1000000;
+// int Bit[maxn];
+
+// /*
+//     Function to calculate the sum of previous
+//     numbers that are greater  than the current number in the array.
+// */
+// void solve(vector<int> arr, int N, vector<int> &res) {
+
+//   // Iterate the whole array.
+//   for (int i = 0; i < N; i++) {
+//     int index;
+//     int sum = 0;
+//     index = 100000;
+
+//     while (index) {
+
+//       // Calculating the sum of elements in the Fenwick Tree.
+//       sum = sum + Bit[index];
+//       index = index - (index & -index);
+//     }
+
+//     /*
+//         Storing the value of sum of elements having
+//         value smaller than or equal to the current element.
+//     */
+//     int sumNow = 0;
+
+//     index = arr[i];
+
+//     while (index) {
+//       sumNow = sumNow + Bit[index];
+//       index = index - (index & -index);
+//     }
+
+//     int ans = sum - sumNow;
+//     res.push_back(ans);
+
+//     // Update the Fenwick tree.
+//     index = arr[i];
+//     while (index <= 100000) {
+
+//       Bit[index] = Bit[index] + arr[i];
+//       index = index + (index & -index);
+//     }
+//   }
+// }
+
+// vector<int> fenwikTree(vector<int> arr, int N) {
+
+//   // To store the sum for different elements.
+//   vector<int> res;
+
+//   // Initializing Fenwick Tree.
+//   for (int i = 0; i < maxn; i++) {
+//     Bit[i] = 0;
+//   }
+
+//   solve(arr, N, res);
+
+//   return res;
+// }
+```
+## Co-prime Twins
+A pair of positive integers (a, b) is said to be a coprime-twin pair, if for all positive integers x, both a and b and are coprime to x or both and are not coprime to x. Formally, 2 distinct positive integers a and b can form a coprime-twin pair if and only if S(a) = S(b), where S(x) denotes the set of all positive integers that are coprime to x.
+For example:
+2 and 4 are coprime-twin pairs.
+1 and 2 are not coprime-twin pairs.
+
+
+The score of a sequence a1, a2, .. an is the number of indices (i, j) such that i < j and the pair (ai, aj) forms a coprime-twin pair.
+
+You are given an array A of positive integers and Q queries of the form L, R. For each query, determine the score of the subarray [L,  R] inclusive.
+
+Note: A subarray is a contiguous non-empty segment of the array.
+```cpp
+/*
+    Function to calculate the reduced form of each number from 1 to maxn.
+*/
+void preCompute(vector < int > &reduced, int maxn) {
+
+    // Compute the reduced form using sieve.
+    for (int i = 2; i <= maxn; i++) {
+        
+        // Means that i is a prime.
+        if (reduced[i] == 1) {
+
+            // Add i to all its multiples.
+            for (int j = i; j <= maxn; j += i)
+                reduced[j] *= i;
+        }
+    }
+}
+
+/*
+    Function to add an element to our range.
+*/
+void add(int i, vector < int > & cnt, vector < int > & A, int & ans) {
+    ans += cnt[A[i]];
+    cnt[A[i]]++;
+}
+
+/*
+    Function to remove an element to our range.
+*/
+void remove(int i, vector < int > & cnt, vector < int > & A, int & ans) {
+    cnt[A[i]]--;
+    ans -= cnt[A[i]];
+}
+vector < int > coprimeTwins(vector < int > & A, vector < pair < int, int > > & Queries) {
+    
+    int maxn = *max_element(A.begin(), A.end());
+    // Vector to store the reduced form
+    vector < int > reduced(maxn + 1, 1);
+
+    // Precompute the reduced form using sieve.
+    preCompute(reduced, maxn);
+
+    for (int & x: A) {
+        // Replace each number with reduced form.
+        x = reduced[x];
+    }
+    // block size set to sqrt(N).
+    int block = sqrt(A.size());
+
+    // Array to store the ordering of the queries.
+    vector < int > order(Queries.size());
+    for(int i = 0; i < order.size() ;i++){
+        order[i] = i;
+    }
+
+    // Sort the order according to the Mo's algorithm order.
+    sort(order.begin(), order.end(), [ & ](int i, int j) {
+        return make_pair((Queries[i].first - 1) / block, Queries[i].second) < make_pair((Queries[j].first - 1) / block, Queries[j].second);
+    });
+    
+    // Store the frequency of each number.
+    vector < int > cnt(maxn + 1);
+
+    // To store the answer for each query.
+    vector < int > answer(Queries.size());
+
+    int ans = 0;
+    add(0, cnt, A, ans);
+    int left = 0, right = 0;
+
+    for (int i: order) {
+        int L = Queries[i].first - 1, R = Queries[i].second - 1;
+
+        // Add or remove indices to match current interval.
+        while (left > L)
+            add(--left, cnt, A, ans);
+        while (right < R)
+            add(++right, cnt, A, ans);
+        while (left < L)
+            remove(left++, cnt, A, ans);
+        while (right > R)
+            remove(right--, cnt, A, ans);
+
+        answer[i] = ans;
+    }
+
+    return answer;
+} 
+```
+## ORDERSET $$
+In this problem, you have to maintain a dynamic set of numbers which support the two fundamental operations
+INSERT(S,x): if x is not in S, insert x into S
+DELETE(S,x): if x is in S, delete x from S
+and the two type of queries
+K-TH(S) : return the k-th smallest element of S
+COUNT(S,x): return the number of elements of S smaller than x
+Input Format:
+Line 1: Q , the number of operations
+In the next Q lines, the first token of each line is a character I, D, K or C meaning that the corresponding operation is INSERT, DELETE, K-TH or COUNT, respectively, following by a whitespace and an integer which is the parameter for that operation.
+```cpp
+#include <bits/stdc++.h>
+#include <ext/pb_ds/assoc_container.hpp>
+#include <ext/pb_ds/tree_policy.hpp>
+using namespace std;
+using namespace __gnu_pbds;
+//using policy based datastructure 
+template <typename T>
+using oset =
+    tree<T, null_type, less<T>, rb_tree_tag, tree_order_statistics_node_update>;
+
+signed main(){
+
+  int n;
+  cin >> n;
+  oset<int> s;
+
+  for (int i = 0; i < n; i++) {
+    char ch;
+    int x;
+    cin >> ch >> x;
+    if(ch=='I') s.insert(x);
+    else if(ch=='D'){
+        // auto it = s.find_by_order(x);
+        s.erase(x);
+    }
+    else if (ch == 'K') {
+      if (x > s.size())
+        cout << "invalid" << '\n';
+      else {
+        cout << *s.find_by_order(--x) << '\n';
+      }
+    } else{
+       cout << s.order_of_key(x) << '\n';
+    }
+
+  }
+    return 0;
+}
+```
+## Count of Smaller Elements
+Given an array of size 'N' return the count array such that COUNT[i] equals the number of element which are smaller than ARR[ i ] on its the right side.
+For Example : ARR = [4,2,1,5] the count array corresponding to the given array is :-.
+The Number of elements smaller than 4 on its right side is 2.
+The Number of elements smaller than 2 on its right side is 1.
+The Number of elements smaller than 1 on its right side is 0.
+The Number of elements smaller than 5 on its right side is 0.
+Hence the count array is [2,1,0,0]
+```cpp
+int qry(int i, vector<int>& bit){
+    int res = 0;
+    while(i){
+        res += bit[i];
+        i -= (i & (-i));
+    }
+    return res;
+}
+
+void upd(int i, vector<int>& bit, int n, int v){
+    while(i<n){
+        bit[i] += v;
+        i += (i & (-i));
+    }
+}
+vector<int>countNumber(int n, vector<int> &a)
+{
+    int mn = *min_element(begin(a), end(a));
+    int mx = *max_element(begin(a), end(a));
+
+    vector<int> bit(mx-mn+1, 0);
+    map<int, int> mp;
+    int cnt = 1;
+    vector<int> ans(n, 0);
+    for(int i=mn; i<=mx; ++i)
+        mp[i] = cnt++;
+    
+    for(int i=0; i<n; ++i)
+        a[i] = mp[a[i]];
+    
+    for(int i=n-1; ~i; --i){
+        ans[i] = qry(a[i]-1, bit);
+        upd(a[i], bit, bit.size(), 1);
+    }
+    return ans;
+}
+```
+
