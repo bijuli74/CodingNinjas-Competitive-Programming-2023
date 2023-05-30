@@ -579,3 +579,268 @@ string longestPalinSubstring(string s){
 //     return t.substr(st, ed - st);
 // }
 ```
+## Longest common prefix (LCP using suffix array)
+Find the longest common prefix from an array of all the suffixes
+```cpp
+#include <bits/stdc++.h>
+using namespace std;
+struct suffix
+{
+int index;
+int rank[2];
+};
+int cmp(struct suffix a, struct suffix b)
+{
+return (a.rank[0] == b.rank[0])?
+(a.rank[1] < b.rank[1] ?1: 0):
+(a.rank[0] < b.rank[0] ?1: 0);
+}
+vector<int> buildSuffixArray(string txt, int n)
+{
+struct suffix suffixes[n];
+for (int i = 0; i < n; i++)
+{
+suffixes[i].index = i;
+suffixes[i].rank[0] = (int)txt[i];
+suffixes[i].rank[1] = ((i+1) < n)?
+(int)txt[i + 1]: -1;
+}
+sort(suffixes, suffixes+n, cmp);
+int ind[n];
+for (int k = 4; k < 2*n; k = k*2)
+{
+int rank = 0;
+int prev_rank = suffixes[0].rank[0];
+suffixes[0].rank[0] = rank;
+ind[suffixes[0].index] = 0;
+for (int i = 1; i < n; i++)
+{
+if (suffixes[i].rank[0] == prev_rank &&
+suffixes[i].rank[1] == suffixes[i-1].rank[1])
+{
+prev_rank = suffixes[i].rank[0];
+suffixes[i].rank[0] = rank;
+}
+else
+{
+prev_rank = suffixes[i].rank[0];
+suffixes[i].rank[0] = ++rank;
+}
+ind[suffixes[i].index] = i;
+}
+for (int i = 0; i < n; i++)
+{
+int nextindex = suffixes[i].index + k/2;
+suffixes[i].rank[1] = (nextindex < n)?
+suffixes[ind[nextindex]].rank[0]: -1;
+}
+sort(suffixes, suffixes+n, cmp);
+}
+vector<int>suffixArr;
+for (int i = 0; i < n; i++)
+suffixArr.push_back(suffixes[i].index);
+return suffixArr;
+}
+vector<int> kasai(string txt, vector<int> suffixArr)
+{
+int n = suffixArr.size();
+vector<int> lcp(n, 0);
+vector<int> invSuff(n, 0);
+for (int i=0; i < n; i++)
+invSuff[suffixArr[i]] = i;
+int k = 0;
+for (int i=0; i<n; i++)
+{
+if (invSuff[i] == n-1)
+{
+k = 0;
+continue;
+}
+int j = suffixArr[invSuff[i]+1];
+while (i+k<n && j+k<n && txt[i+k]==txt[j+k])
+k++;
+lcp[invSuff[i]] = k;
+if (k>0)
+k--;
+}
+return lcp;
+}
+void solve(){
+string s;
+cin>>s;
+int n = s.length();
+vector<int> suffixArr = buildSuffixArray(s, n);
+vector<int> lcp = kasai(s, suffixArr);
+cout<<"suffix array ";
+for(auto i : suffixArr) cout<<i<<" ";
+cout<<"\n";
+cout<<"lcp array ";
+for(auto i : lcp) cout<<i<<" ";
+cout<<"\n";
+}
+int main(){
+solve();
+}
+```
+
+## Palindromes and Indexes
+You are given a string S consisting of lowercase characters only, an index ‘i’ and
+length ‘len’. Your task is to find the count of all palindromic substrings in the string
+‘S’ which start at index ‘i’ and have a length of at least ‘len’.
+A string is called palindromic if it reads the same backward as forward. For
+example, "aba" is a palindrome but "abaab" is not a palindrome.
+```cpp
+#include <iostream>
+#include <bits/stdc++.h>
+#define ll long long
+using namespace std;
+string modify(string s){
+string newString="";
+for(int i=0;i<s.size();i++){
+newString+=(char)('#');
+newString+=(char)(s[i]);
+}
+newString+=(char)('#');
+return newString;
+}
+vector<int> manchers(string s){
+int n = s.size();
+vector<int>arr(n);
+int center=0,r=0;
+for(int i=1;i<s.size()-1;i++){
+int other = 2*center -i;
+if(i<r) arr[i] = min(arr[other],r-i);
+while(i-arr[i]-1>=1 && i+arr[i]+1<n-1 && s[i+arr[i]+1] ==
+s[i-arr[i]-1]) arr[i]++;
+if(i+arr[i]>r){
+center=i;
+r=i+arr[i];
+}
+}
+return arr;
+}
+void solve(){
+string text;
+cin>>text;
+int ind,len;
+cin>>ind>>len;
+text = modify(text);
+int ans=0;
+ind--;
+vector<int>arr = manchers(text);
+int newInd = 2*ind+1;
+for(int i=2*ind+len;i<text.size();i++){
+if(i-arr[i] <= newInd){
+ans++;
+}
+}
+cout<<ans<<"\n";
+return;
+}
+int main(){
+int t;
+cin>>t;
+while(t--){
+solve();
+}
+return 0;
+}
+```
+## Distinct Substrings:
+Given a string 'S', you are supposed to return the number of distinct
+substrings(including empty substring) of the given string.
+```cpp
+#include <bits/stdc++.h>
+using namespace std;
+struct suffix {
+int index,rank[2];
+};
+int cmp(struct suffix a, struct suffix b) {
+return (a.rank[0] == b.rank[0])?
+(a.rank[1] < b.rank[1] ?1: 0):
+(a.rank[0] < b.rank[0] ?1: 0);
+}
+vector<int> buildSuffixArray(string txt, int n) {
+struct suffix suffixes[n];
+for (int i = 0; i < n; i++)
+{
+suffixes[i].index = i;
+suffixes[i].rank[0] = (int)txt[i];
+suffixes[i].rank[1] = ((i+1) < n)?
+(int)txt[i + 1]: -1;
+}
+sort(suffixes, suffixes+n, cmp);
+int ind[n]; // This array is needed to get the
+for (int k = 4; k < 2*n; k = k*2)
+{
+int rank = 0;
+int prev_rank = suffixes[0].rank[0];
+suffixes[0].rank[0] = rank;
+ind[suffixes[0].index] = 0;
+for (int i = 1; i < n; i++) {
+if (suffixes[i].rank[0] == prev_rank && suffixes[i].rank[1] == suffixes[i-1].rank[1]) {
+prev_rank = suffixes[i].rank[0];
+suffixes[i].rank[0] = rank;
+}
+else // Otherwise increment rank and assign
+{
+prev_rank = suffixes[i].rank[0];
+suffixes[i].rank[0] = ++rank;
+}
+ind[suffixes[i].index] = i;
+}
+for (int i = 0; i < n; i++)
+{
+int nextindex = suffixes[i].index + k/2;
+suffixes[i].rank[1] = (nextindex < n)?
+suffixes[ind[nextindex]].rank[0]: -1;
+}
+sort(suffixes, suffixes+n, cmp);
+}
+vector<int>suffixArr;
+for (int i = 0; i < n; i++)
+suffixArr.push_back(suffixes[i].index);
+return suffixArr;
+}
+vector<int> kasai(string txt, vector<int> suffixArr)
+{
+int n = suffixArr.size();
+vector<int> lcp(n, 0);
+vector<int> invSuff(n, 0);
+for (int i=0; i < n; i++)
+invSuff[suffixArr[i]] = i;
+int k = 0;
+for (int i=0; i<n; i++)
+{
+if (invSuff[i] == n-1)
+{
+k = 0;
+continue;
+}
+int j = suffixArr[invSuff[i]+1];
+while (i+k<n && j+k<n && txt[i+k]==txt[j+k])
+k++;
+lcp[invSuff[i]] = k; // lcp for the present suffix.
+if (k>0)
+k--;
+}
+return lcp;
+}
+void solve(){
+string s;
+cin>>s;
+int n = s.length();
+vector<int> suffixArr = buildSuffixArray(s, n);
+vector<int> lcp = kasai(s, suffixArr);
+int result = (n*(n+1))/2;
+for(auto i : lcp) result-=i;
+cout<<result<<"\n";
+}
+int main(){
+int t;
+cin>>t;
+while(t--){
+solve();
+}
+}
+```
