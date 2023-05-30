@@ -2097,66 +2097,129 @@ vector<int> countPokemon(int n, vector<pair<int,int>> edges, vector<int> poke, i
     
 }
 ```
-## Tree and Queries $$
+## Tree and Queries $$$
 You are given a tree with ‘N’ vertex having ‘N’ - 1 edge. Each edge has a weight ‘W’ associated with it. You are also given an array ‘QUERY’ of size ‘Q’, where each query consists of two nodes ‘U’ and ‘V’ and an integer ‘K’. Your task is to print the XOR of all the edges present between the nodes ‘U’, and ‘V’ and have their weight smaller than or equal to ‘K’.
 ```cpp
-const int N = 1e5+5;
-vector<pair<int, int>> adj[N];
-int anc[N][20], d[N], dis[N];
-
-
-void dfs(int u, int p, int w){
-    anc[u][0] = p;
-    d[u] = d[p]+1;
-   dis[u] = dis[p]^w;
-    for(int i=1; i<=19; ++i)
-        anc[u][i] = anc[anc[u][i-1]][i-1];
-    for(auto it : adj[u]){
-        int v = it.first, w = it.second;
-        if(v==p) continue;
-        dfs(v, u, w);
-    }
+/*
+Time complexity: O(N * (log(N)) + Q * (log(Q) + log(N)))
+Space complexity: O(N)
+Where 'N' is the number of vertices and 'Q' is the number of queries.
+*/
+#include <unordered_map>
+#include <algorithm>
+// Function to add edge to the tree.
+void addEdge(unordered_map<int, vector<vector<int>>> &tree, vector<int> edge) {
+int u = edge[0];
+int v = edge[1];
+int w = edge[2];
+vector<int> tempNode;
+tempNode.push_back(v);
+tempNode.push_back(w);
+tree[u].push_back(tempNode);
+tempNode[0] = u;
+tree[v].push_back(tempNode);
 }
-
-int lca(int x, int y){
-    if(d[x] < d[y]) swap(x, y);
-    for(int i=19; ~i; --i) if(d[anc[x][i]] >= d[y]) x=anc[x][i];
-    if(x==y) return x;
-    for(int i=19; ~i; --i) if(anc[x][i] != anc[y][i]) x=anc[x][i], y=anc[y][i];
-    return anc[x][0];
+// Function to get the result.
+int get(vector<int> &bit, int x) {
+// To store the answer.
+int ans = 0;
+// Find the answer.
+while(x > 0) {
+ans ^= bit[x];
+x -= x & (-x);
 }
-
-void clear(){
-    for(int i=0; i<N; ++i){
-        adj[i].clear();
-        d[i]=dis[N]=0;
-    }
+return ans;
 }
-int qry(int u, int v, int k){
-    int p=lca(u, v);
-    int ans = (dis[u]^dis[v]^dis[p]^dis[anc[p][0]]);
-    return ans & ((1<<(k+1))-1);
+// Function to add nodes.
+void add(vector<int> &bit, int n, int x, int v) {
+// Update bit.
+while(x <= n) {
+bit[x] ^= v;
+x += x & (-x);
 }
-
-vector<int> XORquery(int n, vector<vector<int>> &edges, int q, vector<vector<int>> &query) {
-    // N = n;
-    clear();
-    vector<int> res;
-
-    for(int i=0; i<edges.size(); ++i){
-        int u=edges[i][0], v=edges[i][1], w=edges[i][2];
-      adj[u].push_back({v, w});
-      adj[v].push_back({u, w});
-    }
-
-    dfs(1, 0, 0);
-    for(int i=0; i<query.size(); ++i){
-        int u=query[i][0], v=query[i][1], k=query[i][2];
-        int p=lca(u, v);
-        int ans = qry(u, v, k);
-        res.push_back(ans);
-    }
-    return res;
+}
+// DFS function.
+void dfs(unordered_map<int, vector<vector<int>>> &tree, int u, int parent,
+int &timer, vector<int> &st, vector<int> &en) {
+// Update timer.
+st[u] = ++timer;
+for(int i = 0; i < tree[u].size(); ++i) {
+// Check if not parent.
+if(tree[u][i][0] != parent) {
+dfs(tree, tree[u][i][0], u, timer, st, en);
+}
+}
+// Update end timer.
+en[u] = timer;
+}
+vector<int> XORquery(int n, vector<vector<int>> &edges,
+int q, vector<vector<int>> &query) {
+// Create tree.
+unordered_map<int, vector<vector<int>>> tree;
+for(int i = 0; i < edges.size(); ++i) {
+addEdge(tree, edges[i]);
+}
+int timer = 0;
+// To store timer for entering and exiting the node.
+vector<int> st(100010);
+vector<int> en(100010);
+// Call dfs function.
+dfs(tree, 1, -1, timer, st, en);
+// To store nodes of the queries.
+vector<int> node1(100010);
+vector<int> node2(100010);
+// To store queries in sorted manner.
+vector<vector<int>> sortQ;
+for(int i = 0; i < n - 1; ++i) {
+// Check which node is greater.
+if(st[edges[i][0]] < st[edges[i][1]]) {
+swap(edges[i][0], edges[i][1]);
+}
+vector<int> temp;
+temp.push_back(edges[i][2]);
+temp.push_back(-edges[i][0]);
+// Append in sortQ.
+sortQ.push_back(temp);
+}
+// Store queries.
+for(int i = 1; i <= q; ++i) {
+// Store nodes.
+node1[i] = query[i - 1][0];
+node2[i] = query[i - 1][1];
+vector<int> temp;
+temp.push_back(query[i - 1][2]);
+temp.push_back(i);
+// Append in sortQ.
+sortQ.push_back(temp);
+}
+// Sort the array.
+sort(sortQ.begin(), sortQ.end());
+// To store the BIT.
+vector<int> bit(100010);
+// To store the query temporary results.
+vector<int> tempRes(100010);
+for(int i = 0; i < sortQ.size(); ++i) {
+// Check condition.
+if(sortQ[i][1] < 0) {
+int node = -sortQ[i][1];
+// Add the node.
+add(bit, n, st[node], sortQ[i][0]);
+add(bit, n, en[node] + 1, sortQ[i][0]);
+}
+// Answer the query.
+else {
+// Get index.
+int idx = sortQ[i][1];
+// Store the result.
+tempRes[idx] = get(bit, st[node1[idx]]) ^ get(bit, st[node2[idx]]);
+}
+}
+// To store query results.
+vector<int> res;
+for(int i = 1; i <= q; ++i) {
+res.push_back(tempRes[i]);
+}
+return res;
 }
 ```
 
