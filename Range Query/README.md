@@ -837,3 +837,512 @@ int main(){
 //   }
 // }
 ```
+
+## Coder Rating
+You are given N coders (1 ≤ N ≤ 300000), conveniently numbered from 1 to N. Each of these coders participates in both High School and Open matches. For each coder, you are also given an Open rating Ai and a High School rating Hi. Coder i is said to be better than coder j if and only if both of coder i's ratings are greater than or equal to coder j's corresponding ratings, with at least one being greater. For each coder i, determine how many coders coder i is better than.
+```cpp
+#include <bits/stdc++.h>
+
+using namespace std;
+
+const int N = (int)(1e6 + 5);
+
+int bit[N];
+
+typedef struct ratings {
+  int A, H, index;
+
+  ratings() {
+    A = 0;
+    H = 0;
+    index = 0;
+  }
+} ratings;
+
+void update(int idx, int delta) {
+  idx += 1;
+  for (; idx < N; idx += (idx & -idx)) {
+    bit[idx] += delta;
+  }
+}
+
+// Sum [0, r]
+int query(int r) {
+  int res = 0;
+  r += 1;
+  for (; r > 0; r -= (r & -r)) {
+    res += bit[r];
+  }
+  return res;
+}
+
+bool cmp(ratings a, ratings b) {
+  if (a.A != b.A)
+    return a.A < b.A;
+  return a.H < b.H;
+}
+
+int main() {
+  int n;
+  cin >> n;
+  ratings r[n];
+  for (int i = 0; i < n; i++) {
+    cin >> r[i].A >> r[i].H;
+    r[i].index = i;
+  }
+
+  sort(r, r + n, cmp);
+
+  int ans[n];
+  int cnt = 0;
+  for (int i = 0; i < n; i++) {
+    if (i < (n - 1) and r[i].A == r[i + 1].A and r[i].H == r[i + 1].H) {
+      cnt++;
+      ans[r[i].index] = query(r[i].H);
+    } else {
+      cnt++;
+      ans[r[i].index] = query(r[i].H);
+      update(r[i].H, cnt);
+      cnt = 0;
+    }
+  }
+
+  for (int i = 0; i < n; i++) {
+    cout << ans[i] << "\n";
+  }
+
+  return 0;
+}
+```
+
+## Distinct Query Problem
+Given a sequence of n numbers a1, a2, ..., an and a number of d-queries. A d-query is a pair (i, j) (1 ≤ i ≤ j ≤ n). For each d-query (i, j), you have to return the number of distinct elements in the subsequence ai, ai+1, ..., aj.
+```
+Input Format:
+Line 1: n (1 ≤ n ≤ 30000).
+Line 2: n numbers a1, a2, ..., an (1 ≤ ai ≤ 10^6).
+Line 3: q (1 ≤ q ≤ 200000), the number of d-queries.
+In the next q lines, each line contains 2 numbers i, j representing a d-query (1 ≤ i ≤ j ≤ n).
+Output Format:
+For each d-query (i, j), print the number of distinct elements in the subsequence ai, ai+1, ..., aj in a single line.
+Sample Input 1:
+5
+1 1 2 1 3
+3
+1 5
+2 4
+3 5
+Sample Output 1:
+3
+2
+3 
+```
+```cpp
+#include <bits/stdc++.h>
+using namespace std;
+
+#include <bits/stdc++.h>
+using namespace std;
+
+#define ll long long
+#define ar array
+
+const int mxN = 1e5;
+int n, q;
+ll x[mxN];
+
+struct node {
+  ll mn, s, lz;
+} st[1 << 19];
+
+void app(int i, ll x, int l2, int r2) {
+  st[i].mn += x;
+  st[i].s += x * (r2 - l2 + 1);
+  st[i].lz += x;
+}
+void psh(int i, int l2, int m2, int r2) {
+  app(2 * i, st[i].lz, l2, m2);
+  app(2 * i + 1, st[i].lz, m2 + 1, r2);
+  st[i].lz = 0;
+}
+void upd(int l1, ll x, int i = 1, int l2 = 0, int r2 = n - 1) {
+  if (l2 == r2) {
+    st[i].mn = x;
+    st[i].s = x;
+    return;
+  }
+  int m2 = (l2 + r2) / 2;
+  psh(i, l2, m2, r2);
+  if (l1 <= m2)
+    upd(l1, x, 2 * i, l2, m2);
+  else
+    upd(l1, x, 2 * i + 1, m2 + 1, r2);
+  st[i].mn = min(st[2 * i].mn, st[2 * i + 1].mn);
+  st[i].s = st[2 * i].s + st[2 * i + 1].s;
+}
+
+// void upd2(int l1, int r1, int x, int i=1, int l2=0, int r2=n-1){
+// if(l1<=l2 &&r2<=r1){
+// app(i, x, l2, r2);
+// return;
+//}
+// int m2 = (l2+r2)/2;
+// psh(i, l2, m2, r2);
+// if(l1<=m2)
+// upd2(l1, r1, x, 2*i, l2, m2);
+// if(m2<r1)
+// upd2(l1, r1, x, 2*i+1, m2+1, r2);
+// st[i].mn = min(st[2*i].mn, st[2*i+1].mn);
+// st[i].s = st[2*i].s + st[2*i+1].s;
+//}
+ll qry(int l1, int r1, int i = 1, int l2 = 0, int r2 = n - 1) {
+  if (l1 <= l2 && r2 <= r1) {
+    return st[i].s;
+  }
+  int m2 = (l2 + r2) / 2;
+  psh(i, l2, m2, r2);
+  return (l1 <= m2 ? qry(l1, r1, 2 * i, l2, m2) : 0) +
+         (m2 < r1 ? qry(l1, r1, 2 * i + 1, m2 + 1, r2) : 0);
+}
+
+vector<ar<int, 2>> ta[mxN];
+int ans[mxN];
+
+int main() {
+  ios::sync_with_stdio(false);
+  cin.tie(0); cout.tie(0);
+
+//   for(int i=0; i<mxN; ++i){
+//       ta[i].clear();
+//       ans[i]=0;
+//   }  
+  cin >> n;
+  for (int i = 0; i < n; ++i)
+    cin >> x[i];
+
+    cin>>q;
+  for (int i = 0; i < q; ++i) {
+    int a, b;
+    cin >> a >> b, --a, --b;
+    ta[b].push_back({a, i});
+  }
+
+  map<int, int> mp;
+  for (int i = 0; i < n; ++i) {
+    upd(i, 1);
+    if (mp.find(x[i]) != mp.end())
+      upd(mp[x[i]], 0);
+    mp[x[i]] = i;
+
+    for (ar<int, 2> a : ta[i])
+      ans[a[1]] = qry(a[0], i);
+  }
+
+  for (int i = 0; i < q; ++i)
+    cout << ans[i] << "\n";
+
+  return 0;
+}
+
+
+// typedef struct query {
+//   int l, r, blk_no, i;
+
+//   query() { l = r = blk_no = i = -1; }
+
+//   query(int L, int R, int B, int idx) {
+//     l = L;
+//     r = R;
+//     blk_no = L / B;
+//     i = idx;
+//   }
+// } query;
+
+// const int N = (int)(1e5 + 5);
+// int a[N];
+// int B;
+
+// const int M = (int)(1e6 + 5);
+// int freq[M];
+
+// int ans = 0;
+
+// void add(int i) {
+//   freq[a[i]] += 1;
+//   if (freq[a[i]] == 1) {
+//     ans++;
+//   }
+// }
+
+// void remove(int i) {
+//   freq[a[i]] -= 1;
+//   if (freq[a[i]] == 0) {
+//     ans--;
+//   }
+// }
+
+// bool cmp(query &a, query &b) {
+//   if (a.blk_no != b.blk_no)
+//     return a.blk_no < b.blk_no;
+//   return a.r < b.r;
+// }
+
+// int main() {
+
+//   int n;
+//   cin >> n;
+//   for (int i = 0; i < n; i++)
+//     cin >> a[i];
+
+//   B = sqrt(n);
+
+//   int q;
+//   cin >> q;
+//   query queries[q];
+//   for (int i = 0; i < q; i++) {
+//     int l, r;
+//     cin >> l >> r;
+//     l--;
+//     r--;
+//     queries[i] = query(l, r, B, i);
+//   }
+
+//   sort(queries, queries + q, cmp);
+
+//   int ans_to_queries[q];
+
+//   int L = queries[0].l, R = queries[0].l - 1;
+
+//   for (int i = 0; i < q; i++) {
+//     while (R < queries[i].r) {
+//       R++;
+//       add(R);
+//     }
+
+//     while (R > queries[i].r) {
+//       remove(R);
+//       R--;
+//     }
+
+//     while (L < queries[i].l) {
+//       remove(L);
+//       L++;
+//     }
+
+//     while (L > queries[i].l) {
+//       L--;
+//       add(L);
+//     }
+
+//     ans_to_queries[queries[i].i] = ans;
+//   }
+
+//   for (int i = 0; i < q; i++) {
+//     cout << ans_to_queries[i] << "\n";
+//   }
+
+//   return 0;
+// }
+```
+## Distinct Query with Updates
+Given a sequence of n numbers a1, a2, ..., an, and a number of d-queries of the following types.
+1. For each d-query (1, i, j),You have to return the number of distinct elements in the subsequence (i,j)i.e., ai, ai+1, ..., aj. where (1 ≤ i ≤ j ≤ n).
+2. For each d-query (2, i, x), you have to update a[i]=x. where(1 ≤ x ≤ 10^6)
+
+```cpp
+const int BLK = 1000;
+typedef struct query {
+    int l, r, t, idx;
+    query() {
+        l = r = t = idx = 0;
+    }
+} query;
+
+int get(int i){
+    return (i/BLK);
+}
+
+bool cmp(query& a, query& b){
+    if(get(a.l) != get(b.l)) return a.l < b.l;
+    else if(get(a.r) != get(b.r)) return a.r < b.r;
+    return a.t < b.t;
+}
+
+void add(int x, int& ans, unordered_map<int, int>& freq){
+    if(freq[x]==0){
+        ++ans;
+        ++freq[x];
+    }else{
+        freq[x]++;
+    }
+}
+void del(int x, int& ans, unordered_map<int, int>& freq){
+    if(freq[x]==1){
+        --ans;
+        --freq[x];
+    }else{
+        freq[x]--;
+    }
+}
+
+vector <int> distinctQueryWithUpdates(int n, int q, vector <int> & a, vector<vector<int>>& Q) {
+    int ans = 0;
+    unordered_map<int, int> freq;
+    vector<query> queries;
+    vector<pair<int, pair<int, int>>> updates;
+    int no_updates = 0;
+    
+    for(int i=0; i<q; ++i){
+        int type = Q[i][0];
+        if(type==1){
+            int l = Q[i][1], r = Q[i][2];
+            --l, --r;
+            query cur_q;
+            cur_q.l = l, cur_q.r = r, cur_q.t = no_updates, cur_q.idx = queries.size();
+
+            queries.push_back(cur_q);
+        }
+        else{
+            int idx = Q[i][1], x = Q[i][2];
+            --idx;
+            updates.push_back({idx, {x, -1}});
+            ++no_updates;
+        }
+    }
+    sort(begin(queries), end(queries), cmp);
+    int b[n];
+    for(int i=0; i<n; ++i)
+        b[i] = a[i];
+    
+    for(int i=0; i<updates.size(); ++i){
+        int idx = updates[i].first;
+        int val = updates[i].second.first;
+        updates[i].second.second = b[idx];
+        b[idx] = val;
+    }
+    int L = queries[0].l;
+    int R = L-1;
+
+    int timestamp = -1;
+
+    int nq = queries.size();
+    int query_ans[nq];
+    for(int i=0; i<nq; ++i){
+        int idx = queries[i].idx, l = queries[i].l, r = queries[i].r, t = queries[i].t;
+        while(R<r){
+            R++;
+            add(a[R], ans, freq);
+        }
+        while(R>r){
+            del(a[R], ans, freq);
+            --R;
+        }
+        while(L<l){
+            del(a[L], ans, freq);
+            L++;
+        }
+        while(L>l){
+            L--;
+            add(a[L], ans, freq);
+        }
+        while(timestamp < t){
+            timestamp++;
+            if(timestamp < updates.size()){
+                int up_idx = updates[timestamp].first;
+                int new_val = updates[timestamp].second.first;
+                int old_val = updates[timestamp].second.second;
+
+                if(up_idx >= L && up_idx <=R)
+                    del(old_val, ans, freq);
+                a[up_idx] = new_val;
+                if(up_idx >= L && up_idx <=R)
+                    add(new_val, ans, freq);
+            }
+        }
+
+        while (timestamp > t) {
+          timestamp++;
+          if (timestamp < updates.size()) {
+            int up_idx = updates[timestamp].first;
+            int new_val = updates[timestamp].second.second;
+            int old_val = updates[timestamp].second.first;
+
+            if (up_idx >= L && up_idx <= R)
+              del(old_val, ans, freq);
+            a[up_idx] = new_val;
+            if (up_idx >= L && up_idx <= R)
+              add(new_val, ans, freq);
+          }
+        }
+
+        query_ans[idx] = ans;
+    }
+
+    vector<int> res;
+    for(int i=0; i<nq; ++i)
+        res.push_back(query_ans[i]);
+    
+    return res;
+}
+```
+## Shil and Wave Sequence $
+Given a sequence A1 , A2 , A3 .. AN of length N. Find total number of wave subsequences having length greater than 1.
+Wave subsequence of sequence A1 , A2 , A3 .. AN is defined as a set of integers i1 , i2 .. ik such that Ai1 < Ai2 > Ai3 < Ai4 .... or Ai1 > Ai2 < Ai3 > Ai4 .... and i1 < i2 < ...< ik.Two subsequences i1 , i2 .. ik and j1 , j2 .. jm are considered different if k != m or there exists some index l such that il ! = jl
+```cpp
+#include<bits/stdc++.h>
+using namespace std;
+
+#define ll long long
+const int M = 1e9+7;
+const int mxN = 1e5;
+
+
+ll dp_lo[mxN+1], dp_hi[mxN+1];
+ll a[mxN+1];
+
+int main(){
+    ios::sync_with_stdio(false); cin.tie(0);
+
+    ll n, x, t, s1, s2;
+    cin>>n;
+    for(ll i=1; i<=n; ++i){
+        cin>>x;
+        t = mxN;
+        s1 = s2 = 0;
+        while(t){
+            s1 = (s1+dp_hi[t]+a[t])%M;
+            t -= (t & (-t));
+        }
+        t = x;
+        while(t){
+            s1 = (s1 - dp_hi[t]-a[t]+M)%M;
+            t -= (t & (-t));
+        }
+        t = x-1;
+        while(t){
+            s2 = (s2+dp_lo[t] + a[t])%M;
+            t -= (t & (-t));
+        }
+        t = x;
+        while(t < mxN+1){
+            dp_lo[t] = (dp_lo[t] + s1)%M;
+            dp_hi[t] = (s2 + dp_hi[t])%M;
+            a[t]++;
+            t += (t & (-t));
+        }
+
+    }
+    
+    ll ans = 0;
+    s1= s2=0;
+    t = mxN;
+    while(t){
+        ans = (ans + dp_hi[t])%M;
+        ans = (ans + dp_lo[t])%M;
+        t -= (t & (-t));
+    }
+    cout << ans;
+    
+    return 0;
+}
+```
