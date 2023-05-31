@@ -645,4 +645,203 @@ int oddPartitions(string s) {
     return dp[n-1];
 }
 ```
+## CSES Tree Distance II
+```cpp
+#include<bits/stdc++.h>
 
+using namespace std;
+
+const int N = (int)(2e5+5);
+
+#define int long long
+
+vector<int> g[N];
+
+int in[N];
+int count_in[N];
+
+void dfs(int s, int p){
+	in[s] = 0;
+	count_in[s] = 0;
+
+	for(int v: g[s]){
+		if(v != p){
+			dfs(v, s);
+			in[s] += in[v] + count_in[v] + 1;
+			count_in[s] += count_in[v] + 1;
+		}
+	}
+}
+
+int out[N];
+int count_out[N];
+
+void dfs_out(int s, int p, int n){
+	int sum = 0;
+	for(int v: g[s]){
+		if(v != p){
+			sum += in[v] + count_in[v] * 2 + 2;
+		}
+	}
+
+	for(int v: g[s]){
+		if(v != p){
+			out[v] = out[s] + count_out[s] + 1 + sum - (in[v] + count_in[v] * 2 + 2);
+			count_out[v] = n - count_in[v] - 1;
+			dfs_out(v, s, n); 
+		}
+	}
+}
+
+
+
+signed main(){
+	// freopen("input.txt", "r", stdin);
+	// freopen("out.txt", "w", stdout);
+
+	int n;
+	cin>>n;
+
+	for(int i=0; i<n-1; i++){
+		int u, v;
+		cin>>u>>v;
+		g[u].push_back(v);
+		g[v].push_back(u);
+	}
+
+	dfs(1, 0);
+
+	dfs_out(1, 0, n);
+
+	for(int i=1; i<=n; i++){
+		cout<<in[i] + out[i]<<" ";
+	}
+
+
+	return 0;
+}
+```
+## Spoj Sum of Digits
+```cpp
+#include<bits/stdc++.h>
+#define int long long
+
+using namespace std;
+
+int dp[11][2][1000];
+
+vector<int> digits;
+
+int F(int m, int tight, int sum_till_now){
+	if(m == 0) return sum_till_now;
+	else if(dp[m][tight][sum_till_now] > -1) return dp[m][tight][sum_till_now];
+
+	dp[m][tight][sum_till_now] = 0;
+	if(tight == 0){
+		for(int i=0; i<10; i++){
+			dp[m][tight][sum_till_now] += F(m-1, 0, sum_till_now + i);
+		}
+	} else{
+		for(int i=0; i<digits[m-1]; i++)
+			dp[m][tight][sum_till_now] += F(m-1, 0, sum_till_now + i);
+
+		dp[m][tight][sum_till_now] += F(m-1, 1, sum_till_now + digits[m-1]);
+	}
+
+	return dp[m][tight][sum_till_now];
+		
+}
+
+
+int f(int n){
+	digits.clear();
+
+	for(int i=0; i<11; i++){
+		for(int j=0; j<2; j++){
+			for(int k=0; k<1000; k++){
+				dp[i][j][k] = -1;
+			}
+		}
+	}
+
+	while(n > 0){
+		digits.push_back(n % 10);
+		n /= 10;
+	}
+
+	return F(digits.size(), 1, 0);
+
+}
+
+signed main(){
+	freopen("input.txt", "r", stdin);
+	freopen("out.txt", "w", stdout);
+
+	while(true){
+		int a, b;
+		cin>>a>>b;
+		if(a == -1) break;
+
+		if(a == 0) cout<<f(b)<<"\n";
+
+		else{
+			int ans = f(b);
+			ans -= f(a-1);
+
+			cout<<ans<<"\n";
+		}
+
+	}
+	return 0;
+}
+```
+## CSES Game Routes
+```cpp
+#include<bits/stdc++.h>
+
+using namespace std;
+
+const int N = (int)(1e5+5);
+vector<int> g[N];
+const int MOD = (int)(1e9+7);
+
+long long dp[N];
+
+void dfs(int s, int n){
+	if(s == n){
+		dp[s] = 1;
+		return;	
+	}
+	else if(dp[s] > -1) return;
+	else{
+		dp[s] = 0;
+		for(int v: g[s]){
+			dfs(v, n);
+			dp[s] += dp[v];
+			dp[s] %= MOD;
+		}
+	}
+}
+
+int main(){
+	// freopen("input.txt", "r", stdin);
+	// freopen("out.txt", "w", stdout);
+	ios_base::sync_with_stdio(false);
+	cin.tie(0);
+	cout.tie(0);
+	int n, m;
+	cin>>n>>m;
+	for(int i=0; i<m; i++){
+		int u, v;
+		cin>>u>>v;
+		g[u].push_back(v);
+	}
+
+	for(int i=0; i<=n; i++) dp[i] = -1;
+
+	dfs(1, n);
+
+	cout<<dp[1];
+	return 0;
+}
+```
