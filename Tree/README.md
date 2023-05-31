@@ -2222,4 +2222,90 @@ res.push_back(tempRes[i]);
 return res;
 }
 ```
+## Tree Distance-1
+Ninjaland is the beautiful empire comprised of ‘N’ kingdoms connected by N-1 bidirectional roads such that no cycle is formed. While exploring Ninjaland, Ninja thought about the farthest kingdom from the current kingdom he can travel. Can you help Ninja to find the distance of the farthest kingdom from the ith kingdom?
+You are given a tree having ‘N’ nodes and ‘N’-1 edges. Your task is to find ‘ARR’ array where ARR[i] denotes the distance of the farthest node from node i.
+```cpp
 
+
+const int mxN = 1e6+5;
+
+vector<int> adj[mxN];
+int d1[mxN], d2[mxN];
+
+
+void clean(){
+    for(int i=0; i<mxN; ++i){
+        adj[i].clear();
+        d1[i]=d2[i]=0;
+
+    }
+}
+
+void dfs1(int u, int p){
+    for(int v: adj[u]){
+        if( v != p){
+            dfs1(v, u);
+            d1[u] = max(d1[u], d1[v]+1);
+        }
+    }
+}
+
+void dfs2(int u, int p){
+    int mx1 = -1, mx2 = -1;
+    for(int v: adj[u]){
+        if(v != p){
+            if(d1[v] >=mx1){
+                mx2 = mx1;
+                mx1 = d1[v];
+            }else if(d1[v] > mx2){
+                mx2 = d1[v];
+            }
+        }
+    }
+
+    for(int v: adj[u]){
+        if( v != p){
+            int use = mx1;
+            if( mx1 == d1[v])
+                use = mx2;
+            d2[v] = max(d2[u]+1, use+2);
+            
+            dfs2(v, u);
+        }
+    }
+}
+
+void calc_d1(int u, int p){
+    d1[u] = 1+d1[p];
+    for(int i=0; i<adj[u].size(); ++i){
+        if(adj[u][i] != p){
+            calc_d1(adj[u][i], u);
+        }
+    }
+}
+
+
+vector<int> treeDistance(int n, vector<vector<int>> &edges)
+{
+    clean();
+
+    for(int i=0; i<edges.size(); ++i){
+        int u = edges[i][0], v = edges[i][1];
+        ++u; ++v;
+        adj[u].push_back(v);
+        adj[v].push_back(u);
+    }
+
+    dfs1(1, 0); 
+
+    dfs2(1, 0);
+
+    vector<int> ans;
+    for(int i=1; i<=n; ++i){
+        ans.push_back(max(d1[i], d2[i]));
+    }
+
+    return ans;
+}
+```
