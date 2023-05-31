@@ -489,3 +489,185 @@ int smallestSuperSequence(string s1, string s2)
 	return dp[0][0];
 }
 ```
+## Atcoder E-Knapsack 2
+There are N items, numbered 1,2,…,N. For each i (1≤i≤N), Item i has a weight of wiand a value of vi
+Taro has decided to choose some of the N items and carry them home in a knapsack. The capacity of the knapsack is W, which means that the sum of the weights of items taken must be at most W.
+Find the maximum possible sum of the values of items that Taro takes home.
+```cpp
+#include<bits/stdc++.h>
+
+using namespace std;
+
+int main(){
+	// freopen("input.txt", "r", stdin);
+	// freopen("out.txt", "w", stdout);
+
+	int n, W;
+	cin>>n>>W;
+	int w[n+1], v[n+1];
+	for(int i=1; i<=n; i++){
+		cin>>w[i]>>v[i];
+	}
+
+	//F(n, v) = MIN(F(n-1, v-V[n]) + W[n], F(n-1, v))
+	//F(n, 0) = 0; F(0, v) = MAX
+
+	const long long MAX = (long long)(1e9+7);
+	int V = 0;
+	for(int i=1; i<=n; i++) V += v[i];
+	V++;
+	long long dp[n+1][V];
+
+	for(int i=0; i<=n; i++) dp[i][0] = 0;
+	for(int i=1; i<V; i++) dp[0][i] = MAX;
+
+	for(int i=1; i<=n; i++){
+		for(int j=1; j<V; j++){
+			if(v[i] <= j){
+				dp[i][j] = min(dp[i-1][j], dp[i-1][j-v[i]] + w[i]);
+			} else{
+				dp[i][j] = dp[i-1][j];
+			}
+		}
+	}
+
+	int maxV = 0;
+	for(int i=V-1; i>=0; i--){
+		if(dp[n][i] <= W){
+			maxV = i;
+			break;
+		}
+	}
+
+	cout<<maxV<<"\n";
+
+}
+```
+## CF Alyona and Strings
+```cpp
+#include<bits/stdc++.h>
+
+using namespace std;
+
+int main(){
+	freopen("input.txt", "r", stdin);
+	freopen("out.txt", "w", stdout);
+
+	/*
+		F(n, m, k, 0):
+			if s[n] = t[m] max(F(n-1, m-1, k, 1) + 1, F(n-1, m, k, 0), F(n, m-1, k, 0))
+			else max(F(n-1, m, k, 0), F(n, m-1, k, 0))
+
+		F(n, m, k, 1):
+			if s[n] = t[m] max(F(n-1, m-1, k, 1) + 1, F(n, m, k-1, 0))
+			else F(n, m, k-1, 0)
+
+		Base cases:
+		F(n, m, 0, flag) = 0, F(0, m, 1, 1) = F(n, 0, 1, 1) = 0
+		Initialize: F(n, m, k, flag) = INT_MIN
+	*/
+
+	int n,m,K;
+	cin>>n>>m>>K;
+
+	string s, t;
+	cin>>s;
+	cin>>t;
+
+	s = "#" + s;
+	t = "@" + t;
+
+	int dp[n+1][m+1][K+1][2];
+
+	for(int i=0; i<=n; i++){
+		for(int j=0; j<=m; j++){
+			for(int k=0; k<=K; k++){
+				for(int flag=0; flag<2; flag++){
+					dp[i][j][k][flag] = INT_MIN;
+
+					if(k == 0) dp[i][j][k][flag] = 0;
+
+					if(i == 0 or j == 0){
+						if(k == 1 and flag == 1) dp[i][j][k][flag] = 0;
+					}
+				}
+			}
+		}
+	}
+
+	for(int i=1; i<=n; i++){
+		for(int j=1; j<=m; j++){
+			for(int k=1; k<=K; k++){
+				if(s[i] == t[j]){
+					dp[i][j][k][0] = max(dp[i-1][j-1][k][1] + 1, max(dp[i-1][j][k][0], dp[i][j-1][k][0]));
+					dp[i][j][k][1] = max(dp[i-1][j-1][k][1] + 1, dp[i][j][k-1][0]);
+				} else{
+					dp[i][j][k][0] = max(dp[i-1][j][k][0], dp[i][j-1][k][0]);
+					dp[i][j][k][1] = dp[i][j][k-1][0];
+				}				
+			}
+		}
+	}
+
+	cout<<max(dp[n][m][K][0], dp[n][m][K][1]);
+	
+
+	return 0;
+}
+```
+## CF Caesers Legion $
+https://codeforces.com/problemset/problem/118/D
+```cpp
+#include<bits/stdc++.h>
+
+using namespace std;
+
+int k1, k2;
+
+const int mod = (int)(1e8);
+
+long long dp[102][102][11][11];
+
+long long f(int n1, int n2, int p1, int p2){
+	if(p1 == -1 or p2 == -1) return 0;
+	if(n1 == 0 and n2 == 0) return 1;
+
+	if(dp[n1][n2][p1][p2] > -1) return dp[n1][n2][p1][p2];
+
+	else{
+		dp[n1][n2][p1][p2] = 0;
+		if(n1 > 0) dp[n1][n2][p1][p2] = f(n1-1, n2, p1-1, k2);
+		if(n2 > 0) dp[n1][n2][p1][p2] += f(n1, n2-1, k1, p2-1);
+
+		dp[n1][n2][p1][p2] %= mod;
+	}
+
+	return dp[n1][n2][p1][p2];
+
+}
+
+
+int main(){
+	
+		int n1, n2;
+		cin>>n1>>n2>>k1>>k2;
+
+		for(int i=0; i<=n1; i++){
+			for(int j=0; j<=n2; j++){
+				for(int p1=0; p1<=k1; p1++){
+					for(int p2=0; p2<=k2; p2++){
+						dp[i][j][p1][p2] = -1;
+					}
+				}
+			}
+		}
+
+		cout<<f(n1, n2, k1, k2)<<"\n";
+	
+	return 0;
+}
+```
+
+
+
+
