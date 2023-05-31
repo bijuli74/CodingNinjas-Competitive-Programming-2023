@@ -668,6 +668,99 @@ int main(){
 }
 ```
 
+## Expensive Subsequence
+You are given two strings, ‘STR1’ and ‘STR2’, and an integer array ‘COST’, which contains the cost of each lowercase English letter. Your task is to find the cost of the most expensive common subsequence.
+For example:
+You are given ‘STR1’ = “abcd” and ‘STR2’ = “abed” and ‘COST’ = {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}
+The answer will be 3. The most expensive common subsequence will be “abd”, where the cost of each letter is 1. Hence the final answer is 3.
+```cpp
+int findCost(vector<int> &cost, string s1, string s2)
+{
+    int n = s1.size(), m = s2.size();
+    int mx = max(n, m);
+    vector<int> c(2025);
+    vector<vector<int>> dp(2025, vector<int>(2025, 0));
 
+    for(int i='a', j=0; i<='z', j<=25; ++i, ++j)
+        c[i] = cost[j];
+    
+    for(int i=1; i<=n; ++i){
+        for(int j=1; j<=m; ++j){
+            if(s1[i-1] == s2[j-1]){
+                dp[i][j] = dp[i-1][j-1] + c[s1[i-1]];
+            }
+            else{
+                dp[i][j] = max(dp[i][j-1], dp[i-1][j]);
+            }
+        }
+    }
 
+    return dp[n][m];
+}
+```
+## Maximum Students
+The Ultimate Ninja Ankush, has prepared a test for all of his fellow Ninja students, but since he is the Ultimate Ninja, he does not like cheating, and since his students are also ninjas, they broke some chairs in the dojo while practicing their moves.
+The class consists of ‘M’ * ‘N’ seats, represented in a matrix ‘SEATS’. Among the seats, some of the seats are broken. If a seat is broken, it is denoted by '#' character otherwise it is denoted by a '.' character, denoting that the seat can be occupied. A Ninja can’t sit in a broken seat.
+Ankush wants to avoid cheating at any cost. According to his observations, a student can see the answers of four neighboring students sitting next to the left, right, upper left, and upper right, but they cannot see the answers of the student sitting directly in front or behind him. Ankush is very busy so he wants to use the dojo to the fullest. More formally he wants to know the maximum number of ninja students that can be placed in the dojo.
+```
+For example
+Given:
+‘M’ = 3, ‘N’ = 3.
+‘SEATS’ = {
+   {‘.’, ‘.’, ‘.’},
+   {‘#’,’#’, ‘#’},
+   {‘.’,’.’,’.’} 
+   }
+The answer will be 4, since 4 students can be placed at the four corners, i.e. (0,0), (2,2), (2,0), and (0,2) such that no cheating is possible.
+```
+```cpp
+#include <bits/stdc++.h>
+using namespace std;
 
+#define vvi vector<vector<int>>
+#define vvc vector<vector<char>>
+
+int maxStudents(vector<vector<char>>& seats)
+{
+    int n = seats.size();
+    int m = seats[0].size();
+    vector<int> validity;
+
+    for (int i = 0; i < n; ++i)
+    {
+        int cur = 0;
+        for (int j = 0; j < m; ++j)
+        {
+            if (seats[i][j] == '.')
+            {
+                cur = cur ^ (1 << j);
+            }
+        }
+        validity.push_back(cur);
+    }
+
+    vvi dp(n + 1, vector<int>(1 << m, -1));
+
+    dp[0][0] = 0;
+    for (int i = 1; i <= n; ++i)
+    {
+        int valid = validity[i - 1];
+        for (int j = 0; j < (1 << m); ++j)
+        {
+            if ((j & valid) == j && !(j & (j >> 1)))
+            {
+                for (int k = 0; k < (1 << m); ++k)
+                {
+                    if (!(j & (k >> 1)) && !((j >> 1) & k) && dp[i - 1][k] != -1)
+                    {
+                        dp[i][j] = max(dp[i][j], dp[i - 1][k] + __builtin_popcount(j));
+                    }
+                }
+            }
+        }
+    }
+
+    return *max_element(dp[n].begin(), dp[n].end());
+}
+
+```
