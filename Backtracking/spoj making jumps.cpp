@@ -5,7 +5,7 @@ const ll mod= 1e9+7;
 const ll INF=2e14+10;
 using namespace std;
 
-
+// https://www.spoj.com/problems/MKJUMPS/
 typedef struct{
     int ymin;
     int ymax;
