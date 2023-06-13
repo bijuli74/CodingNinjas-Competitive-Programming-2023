@@ -1,5 +1,6 @@
 #include <bits/stdc++.h>
  // spoj 
+// https://www.spoj.com/problems/UCI2009D/
 using namespace std;
 bool vis[10][10];
 vector<string>mine(10);
