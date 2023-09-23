@@ -1654,7 +1654,8 @@ return answer;
 }
 ```
 
-*Solution 2*
+Solution 2
+
 ```cpp
 #include <bits/stdc++.h>
 using namespace std;
