@@ -13,16 +13,15 @@ ll extendedGCD(ll a, ll b, ll &x, ll &y) {
   return d;
 }
 
-ll numbersAndRemainders(int n, vector<int> &a, vector<int> &rem)
-{
-  ll ans = 0, P=1;
-  for(ll i=0; i<n; ++i) P*=a[i];
+ll numbersAndRemainders(int n, vector<int> &a, vector<int> &rem) {
+  ll ans = 0, P = 1;
+  for (ll i = 0; i < n; ++i) P *= a[i];
 
   for (ll i = 0; i < n; i++) {
-
     ll temp = (rem[i] * (P / a[i])) % P;
     ll x, y;
-    ll g = extendedGCD(P / a[i], a[i], x, y);   //To find the mod inverse of (P/a[i])%a[i]
+    ll g = extendedGCD(P / a[i], a[i], x,
+                       y);  // To find the mod inverse of (P/a[i])%a[i]
 
     x = ((x % a[i]) + a[i]) % a[i];
 
